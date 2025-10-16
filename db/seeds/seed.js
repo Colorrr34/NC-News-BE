@@ -99,15 +99,24 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return db.query(sql);
     })
     .then(() => {
-      const dataArray = commentData.map((object) => {
-        const { article_id, body, votes, author, created_at } =
-          require("./utils").convertTimestampToDate(object);
-        return [article_id, body, votes, author, created_at];
+      const dataArray = commentData.map((comment) => {
+        return require("./utils").convertTimestampToDate(comment);
       });
-
+      return Promise.all(
+        dataArray.map((comment) => {
+          return require("./utils").getArticleIdByTitle(comment);
+        })
+      );
+    })
+    .then((comments) => {
+      const dataArray = comments.map(
+        ({ article_id, body, votes, author, created_at }) => {
+          return [article_id, body, votes, author, created_at];
+        }
+      );
       const sql = format(
         `INSERT INTO comments(
-            article_id, body, votes, author, created_at) VALUES %L`,
+        article_id, body, votes, author, created_at) VALUES %L`,
         dataArray
       );
       return db.query(sql);

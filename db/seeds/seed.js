@@ -3,12 +3,15 @@ const { format } = require("node-pg-format");
 
 const seed = ({ topicData, userData, articleData, commentData, emojiData }) => {
   return db
-    .query("DROP TABLE IF EXISTS emojis")
+    .query("DROP TABLE IF EXISTS emoji_article_user")
     .then(() => {
-      db.query("DROP TABLE IF EXISTS comments;");
+      return db.query("DROP TABLE IF EXISTS emojis");
     })
     .then(() => {
-      return db.query("DROP TABLE IF EXISTS articles;");
+      return db.query("DROP TABLE IF EXISTS comments");
+    })
+    .then(() => {
+      return db.query("DROP TABLE IF EXISTS articles");
     })
     .then(() => {
       return db.query("DROP TABLE IF EXISTS users");
@@ -61,6 +64,15 @@ const seed = ({ topicData, userData, articleData, commentData, emojiData }) => {
           CREATE TABLE emojis(
             emoji_id SERIAL PRIMARY KEY,
             emoji VARCHAR(100) NOT NULL
+        );`);
+    })
+    .then(() => {
+      return db.query(`
+          CREATE TABLE emoji_article_user(
+            emoji_article_user_id SERIAL PRIMARY KEY,
+            emoji_id INT REFERENCES emojis,
+            article_id INT REFERENCES articles(article_id),
+            username VARCHAR(20) REFERENCES users(username)
         );`);
     })
     .then(() => {

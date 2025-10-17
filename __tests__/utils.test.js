@@ -3,7 +3,7 @@ const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const {
   convertTimestampToDate,
-  getArticleIdByTitle,
+  getValueByValue,
 } = require("../db/seeds/utils");
 const db = require("../db/connection");
 
@@ -46,7 +46,7 @@ describe("convertTimestampToDate", () => {
   });
 });
 
-describe("getArticleIdByTitle", () => {
+describe("getValueByValue", () => {
   test("returns a new object", () => {
     const object = {
       article_title: "Living in the shadow of a great man",
@@ -55,7 +55,23 @@ describe("getArticleIdByTitle", () => {
       author: "butter_bridge",
       created_at: 1604113380000,
     };
-    expect(getArticleIdByTitle(object)).not.toBe(object);
+    const array = [
+      {
+        article_id: 1,
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: 1594329060000,
+        votes: 100,
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      },
+    ];
+
+    expect(
+      getValueByValue(object, array, "article_title", "title", "article_id")
+    ).not.toBe(object);
   });
 
   test("returns the object with a article id", () => {
@@ -66,10 +82,29 @@ describe("getArticleIdByTitle", () => {
       author: "butter_bridge",
       created_at: 1604113380000,
     };
+    const array = [
+      {
+        article_id: 1,
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: 1594329060000,
+        votes: 100,
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      },
+    ];
 
-    getArticleIdByTitle(object).then((object) => {
-      expect(object.hasOwnProperty("article_id")).toBe(true);
-    });
+    expect(
+      getValueByValue(
+        object,
+        array,
+        "article_title",
+        "title",
+        "article_id"
+      ).hasOwnProperty("article_id")
+    ).toBe(true);
   });
 
   test("the object has the correct article id", () => {
@@ -81,16 +116,35 @@ describe("getArticleIdByTitle", () => {
       created_at: 1604113380000,
     };
 
-    getArticleIdByTitle(object).then((object) => {
-      return Promise.all([
-        db.query(`
+    const array = [
+      {
+        article_id: 1,
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: 1594329060000,
+        votes: 100,
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      },
+    ];
+    console.log(
+      getValueByValue(object, array, "article_title", "title", "article_id")
+    );
+
+    return db
+      .query(
+        `
         SELECT article_id FROM articles
         WHERE title = 'Living in the shadow of a great man'
-        `),
-        object,
-      ]).then(([query, object]) => {
-        expect(object.article_id).toBe(query.rows[0].article_id);
+        `
+      )
+      .then((query) => {
+        expect(
+          getValueByValue(object, array, "article_title", "title", "article_id")
+            .article_id
+        ).toBe(query.rows[0].article_id);
       });
-    });
   });
 });

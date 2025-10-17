@@ -1,5 +1,6 @@
 const db = require("../connection");
 const { format } = require("node-pg-format");
+const articles = require("../data/development-data/articles");
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
@@ -93,20 +94,24 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
             body,
             created_at,
             votes,
-            article_img_url) VALUES %L`,
+            article_img_url) VALUES %L RETURNING *`,
         dataArray
       );
       return db.query(sql);
     })
-    .then(() => {
+    .then(({ rows }) => {
       const dataArray = commentData.map((comment) => {
         return require("./utils").convertTimestampToDate(comment);
       });
-      return Promise.all(
-        dataArray.map((comment) => {
-          return require("./utils").getArticleIdByTitle(comment);
-        })
-      );
+      return dataArray.map((comment) => {
+        return require("./utils").getValueByValue(
+          comment,
+          rows,
+          "article_title",
+          "title",
+          "article_id"
+        );
+      });
     })
     .then((comments) => {
       const dataArray = comments.map(
@@ -122,4 +127,5 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return db.query(sql);
     });
 };
+
 module.exports = seed;

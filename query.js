@@ -31,6 +31,6 @@ const getAllTopics = () => {
   });
 };
 
-getAllTopics().then((data) => {
+getCommentsByVotes().then((data) => {
   console.log(data);
 });

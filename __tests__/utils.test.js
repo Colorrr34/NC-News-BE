@@ -1,6 +1,14 @@
+const { get } = require("node:https");
+const seed = require("../db/seeds/seed");
+const data = require("../db/data/test-data/index");
 const {
-  convertTimestampToDate
+  convertTimestampToDate,
+  getArticleIdByTitle,
 } = require("../db/seeds/utils");
+const db = require("../db/connection");
+
+beforeAll(() => seed(data));
+afterAll(() => db.end());
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
@@ -38,3 +46,51 @@ describe("convertTimestampToDate", () => {
   });
 });
 
+describe("getArticleIdByTitle", () => {
+  test("returns a new object", () => {
+    const object = {
+      article_title: "Living in the shadow of a great man",
+      body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+      votes: 14,
+      author: "butter_bridge",
+      created_at: 1604113380000,
+    };
+    expect(getArticleIdByTitle(object)).not.toBe(object);
+  });
+
+  test("returns the object with a article id", () => {
+    const object = {
+      article_title: "Living in the shadow of a great man",
+      body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+      votes: 14,
+      author: "butter_bridge",
+      created_at: 1604113380000,
+    };
+
+    getArticleIdByTitle(object).then((object) => {
+      expect(object.hasOwnProperty("article_id")).toBe(true);
+    });
+  });
+
+  test("the object has the correct article id", () => {
+    const object = {
+      article_title: "Living in the shadow of a great man",
+      body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+      votes: 14,
+      author: "butter_bridge",
+      created_at: 1604113380000,
+    };
+
+    getArticleIdByTitle(object).then((object) => {
+      return Promise.all([
+        db.query(`
+        SELECT article_id FROM articles
+        WHERE title = 'Living in the shadow of a great man'
+        `),
+        object,
+      ]).then(([query, object]) => {
+        expect(object.article_id).toBe(query.rows[0].article_id);
+      });
+    });
+  });
+});

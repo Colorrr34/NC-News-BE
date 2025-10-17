@@ -72,7 +72,8 @@ const seed = ({ topicData, userData, articleData, commentData, emojiData }) => {
             emoji_article_user_id SERIAL PRIMARY KEY,
             emoji_id INT REFERENCES emojis,
             article_id INT REFERENCES articles(article_id),
-            username VARCHAR(20) REFERENCES users(username)
+            username VARCHAR(20) REFERENCES users(username),
+            CONSTRAINT react UNIQUE (emoji_id,article_id,username)
         );`);
     })
     .then(() => {

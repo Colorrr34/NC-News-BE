@@ -609,6 +609,105 @@ describe("seed", () => {
         });
     });
   });
+
+  describe("emoji_article_user table", () => {
+    test("emojij_article_user table exists", () => {
+      return db
+        .query(
+          `SELECT EXISTS (
+            SELECT FROM 
+                information_schema.tables 
+            WHERE 
+                table_name = 'emoji_article_user'
+            );`
+        )
+        .then(({ rows: [{ exists }] }) => {
+          expect(exists).toBe(true);
+        });
+    });
+
+    test("emoji_article_user table has emoji_article_user_id column as a serial", () => {
+      return db
+        .query(
+          `SELECT column_name, data_type, column_default
+            FROM information_schema.columns
+            WHERE table_name = 'emoji_article_user'
+            AND column_name = 'emoji_article_user_id';`
+        )
+        .then(({ rows: [column] }) => {
+          expect(column.column_name).toBe("emoji_article_user_id");
+          expect(column.data_type).toBe("integer");
+          expect(column.column_default).toBe(
+            "nextval('emoji_article_user_emoji_article_user_id_seq'::regclass)"
+          );
+        });
+    });
+
+    test("emoji_article_user table has emoji_article_user_id column as the primary key", () => {
+      return db
+        .query(
+          `SELECT column_name
+            FROM information_schema.table_constraints AS tc
+            JOIN information_schema.key_column_usage AS kcu
+            ON tc.constraint_name = kcu.constraint_name
+            WHERE tc.constraint_type = 'PRIMARY KEY'
+            AND tc.table_name = 'emoji_article_user';`
+        )
+        .then(({ rows: [{ column_name }] }) => {
+          expect(column_name).toBe("emoji_article_user_id");
+        });
+    });
+
+    test("emoji column references emoji_id, username, article_id refrence from the emojis, users, articles table", () => {
+      return db
+        .query(
+          `
+        SELECT ccu.table_name, ccu.column_name
+        FROM information_schema.table_constraints AS tc
+        JOIN information_schema.key_column_usage AS kcu
+          ON tc.constraint_name = kcu.constraint_name
+        JOIN information_schema.constraint_column_usage AS ccu
+          ON ccu.constraint_name = tc.constraint_name
+        WHERE tc.constraint_type = 'FOREIGN KEY'
+          AND tc.table_name = 'emoji_article_user'
+      `
+        )
+        .then(({ rows }) => {
+          expect(rows).toContainEqual({
+            table_name: "emojis",
+            column_name: "emoji_id",
+          });
+          expect(rows).toContainEqual({
+            table_name: "users",
+            column_name: "username",
+          });
+          expect(rows).toContainEqual({
+            table_name: "articles",
+            column_name: "article_id",
+          });
+        });
+    });
+
+    test("emoji_article_user table should have a unique constraint for emoji_id, article_id,", () => {
+      return db
+        .query(
+          `SELECT column_name
+            FROM information_schema.table_constraints AS tc
+            JOIN information_schema.key_column_usage AS kcu
+            ON tc.constraint_name = kcu.constraint_name
+            WHERE constraint_type = 'UNIQUE'
+            AND tc.table_name = 'emoji_article_user'
+        `
+        )
+        .then(({ rows }) => {
+          expect(
+            rows.map((row) => {
+              return row.column_name;
+            })
+          ).toEqual(["emoji_id", "article_id", "username"]);
+        });
+    });
+  });
 });
 
 describe("data insertion", () => {

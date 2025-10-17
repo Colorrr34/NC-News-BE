@@ -561,6 +561,54 @@ describe("seed", () => {
         });
     });
   });
+
+  describe("emojis table", () => {
+    test("emojis table exists", () => {
+      return db
+        .query(
+          `SELECT EXISTS (
+            SELECT FROM 
+                information_schema.tables 
+            WHERE 
+                table_name = 'emojis'
+            );`
+        )
+        .then(({ rows: [{ exists }] }) => {
+          expect(exists).toBe(true);
+        });
+    });
+
+    test("emojis table has emoji_id column as serial", () => {
+      return db
+        .query(
+          `SELECT *
+            FROM information_schema.columns
+            WHERE table_name = 'emojis'
+            AND column_name = 'emoji_id';`
+        )
+        .then(({ rows: [column] }) => {
+          expect(column.column_name).toBe("emoji_id");
+          expect(column.data_type).toBe("integer");
+          expect(column.column_default).toBe(
+            "nextval('emojis_emoji_id_seq'::regclass)"
+          );
+        });
+    });
+
+    test("emojis table has emoji column as varying characters", () => {
+      return db
+        .query(
+          `SELECT *
+            FROM information_schema.columns
+            WHERE table_name = 'emojis'
+            AND column_name = 'emoji';`
+        )
+        .then(({ rows: [column] }) => {
+          expect(column.column_name).toBe("emoji");
+          expect(column.data_type).toBe("character varying");
+        });
+    });
+  });
 });
 
 describe("data insertion", () => {
@@ -612,6 +660,16 @@ describe("data insertion", () => {
         expect(comment).toHaveProperty("author");
         expect(comment).toHaveProperty("votes");
         expect(comment).toHaveProperty("created_at");
+      });
+    });
+  });
+
+  test("emojis data has been inserted correctly", () => {
+    return db.query(`SELECT * FROM emojis;`).then(({ rows: emojis }) => {
+      expect(emojis).toHaveLength(6);
+      emojis.forEach((emoji) => {
+        expect(emoji).toHaveProperty("emoji_id");
+        expect(emoji).toHaveProperty("emoji");
       });
     });
   });

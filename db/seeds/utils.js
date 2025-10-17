@@ -14,6 +14,5 @@ exports.getValueByValue = (object, array, keyInObj, keyInArray, newKey) => {
       delete copy[keyInObj];
     }
   });
-
   return copy;
 };

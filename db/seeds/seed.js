@@ -1,7 +1,14 @@
 const db = require("../connection");
 const { format } = require("node-pg-format");
 
-const seed = ({ topicData, userData, articleData, commentData, emojiData }) => {
+const seed = ({
+  topicData,
+  userData,
+  articleData,
+  commentData,
+  emojiData,
+  emojiArticleUserData,
+}) => {
   return db
     .query("DROP TABLE IF EXISTS emoji_article_user")
     .then(() => {
@@ -157,6 +164,19 @@ const seed = ({ topicData, userData, articleData, commentData, emojiData }) => {
         `,
           emojiData.map((emoji) => {
             return [emoji];
+          })
+        )
+      );
+    })
+    .then(() => {
+      return db.query(
+        format(
+          `
+        INSERT INTO emoji_article_user 
+        (article_id,emoji_id,username) VALUES %L
+        `,
+          emojiArticleUserData.map(({ article_id, emoji_id, username }) => {
+            return [article_id, emoji_id, username];
           })
         )
       );

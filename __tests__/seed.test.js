@@ -772,4 +772,18 @@ describe("data insertion", () => {
       });
     });
   });
+
+  test("emoji_article_user data has been inserted correctly", () => {
+    return db
+      .query(`SELECT * FROM emoji_article_user;`)
+      .then(({ rows: emoji_article_user }) => {
+        expect(emoji_article_user).toHaveLength(2);
+        emoji_article_user.forEach((relation) => {
+          expect(relation).toHaveProperty("emoji_article_user_id");
+          expect(relation).toHaveProperty("emoji_id");
+          expect(relation).toHaveProperty("article_id");
+          expect(relation).toHaveProperty("username");
+        });
+      });
+  });
 });

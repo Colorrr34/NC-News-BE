@@ -149,6 +149,15 @@ describe("GET", () => {
       });
   });
 
+  test("GET article by ID includes comment_count", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(typeof body[0].comment_count).toBe("number");
+      });
+  });
+
   test("GET comments from an article", () => {
     return request(app)
       .get("/api/articles/2/comments")

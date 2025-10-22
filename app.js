@@ -53,7 +53,9 @@ app.get("/api/users", async (req, res) => {
 
 app.get("/api/articles/:article_id", async (req, res) => {
   const { article_id } = req.params;
-  const { rows } = await db.query(
+  const {
+    rows: [article],
+  } = await db.query(
     `
       SELECT * 
       FROM articles
@@ -62,7 +64,25 @@ app.get("/api/articles/:article_id", async (req, res) => {
     [article_id]
   );
 
-  res.send(rows);
+  const { rows: commentRows } = await db.query(
+    `
+      SELECT article_id, count(article_id)
+      FROM comments
+      GROUP BY article_id
+    `
+  );
+  const articleCommentCount = {};
+  commentRows.forEach((row) => {
+    articleCommentCount[row.article_id] = +row.count;
+  });
+
+  if (Object.keys(articleCommentCount).includes(String(article_id))) {
+    article.comment_count = articleCommentCount[article_id];
+  } else {
+    article.comment_count = 0;
+  }
+
+  res.send([article]);
 });
 
 app.get("/api/articles/:article_id/comments", async (req, res) => {

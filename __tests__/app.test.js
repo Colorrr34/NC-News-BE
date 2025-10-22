@@ -7,7 +7,7 @@ const data = require("../db/data/test-data");
 beforeEach(() => seed(data));
 
 afterAll(() => db.end());
-describe("app.js", () => {
+describe("GET", () => {
   test("GET topics from the database", () => {
     return request(app)
       .get("/api/topics")
@@ -23,7 +23,7 @@ describe("app.js", () => {
       });
   });
 
-  test("GET articles from the database", () => {
+  test("GET articles from the database, added comment_count", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -68,6 +68,21 @@ describe("app.js", () => {
         const { article_id, comment_count } = body[0];
         expect(article_id).toBe(1);
         expect(comment_count).toBe(commentCount);
+      });
+  });
+
+  test("GET users from the database", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(data.userData.length);
+        body.forEach((user) => {
+          const { username, name, avatar_url } = user;
+          expect(typeof username).toBe("string");
+          expect(typeof name).toBe("string");
+          expect(typeof avatar_url).toBe("string");
+        });
       });
   });
 });

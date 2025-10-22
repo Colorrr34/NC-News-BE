@@ -32,4 +32,10 @@ app.get("/api/articles", async (req, res) => {
   res.send(rows);
 });
 
+app.get("/api/users", async (req, res) => {
+  const { rows } = await db.query("SELECT * FROM users");
+
+  res.send(rows);
+});
+
 module.exports = app;

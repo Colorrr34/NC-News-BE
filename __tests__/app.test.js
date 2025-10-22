@@ -76,6 +76,17 @@ describe("GET", () => {
       });
   });
 
+  test("GET articles takes a topic query which filters the topic of the articles", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+
   test("comment_count has the correct count", () => {
     return request(app)
       .get("/api/articles")

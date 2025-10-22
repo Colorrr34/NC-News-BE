@@ -12,14 +12,15 @@ app.get("/api/topics", async (req, res) => {
 });
 
 app.get("/api/articles", async (req, res) => {
-  const { sort_by = "created_at", order = "desc" } = req.query;
+  const { sort_by = "created_at", order = "desc", topic = "%%" } = req.query;
 
   const { rows } = await db.query(
     format(
-      "SELECT * FROM articles ORDER BY %s %s ",
+      "SELECT * FROM articles WHERE topic LIKE $1 ORDER BY %s %s ",
       sort_by,
       order.toUpperCase()
-    )
+    ),
+    [topic]
   );
 
   const commentResult = await db.query("SELECT article_id FROM comments");

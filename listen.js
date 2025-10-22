@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const db = require("../db/connection");
+const db = require("./db/connection");
 
 app.listen(9000, (err) => {
   if (err) {

@@ -83,4 +83,21 @@ app.post("/api/articles/:article_id/comments", async (req, res) => {
   res.status(201).send(rows);
 });
 
+app.patch("/api/articles/:article_id", async (req, res) => {
+  const { inc_votes } = req.body;
+  const { article_id } = req.params;
+
+  const { rows } = await db.query(
+    `
+      UPDATE articles
+      SET votes = votes + $1
+      WHERE article_id = $2
+      RETURNING *
+    `,
+    [inc_votes, article_id]
+  );
+
+  res.send(rows);
+});
+
 module.exports = app;

@@ -153,3 +153,31 @@ describe("POST", () => {
       });
   });
 });
+
+describe("PATCH", () => {
+  test("PATCH /api/articles/:article_id accepts an object with inc_votes as the key and updates the vote accordingly", () => {
+    const patchBody = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(patchBody)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body[0].votes).toBe(
+          data.articleData[0].votes + patchBody.inc_votes
+        );
+      });
+  });
+
+  test("PATCH accepts negative inc_votes", () => {
+    const patchBody = { inc_votes: -200 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(patchBody)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body[0].votes).toBe(
+          data.articleData[0].votes + patchBody.inc_votes
+        );
+      });
+  });
+});

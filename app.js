@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const db = require("./db/connection");
+const format = require("pg-format");
 
 app.use(express.json());
 
@@ -11,7 +12,16 @@ app.get("/api/topics", async (req, res) => {
 });
 
 app.get("/api/articles", async (req, res) => {
-  const { rows } = await db.query("SELECT * FROM articles");
+  const { sort_by = "created_at", order = "desc" } = req.query;
+
+  const { rows } = await db.query(
+    format(
+      "SELECT * FROM articles ORDER BY %s %s ",
+      sort_by,
+      order.toUpperCase()
+    )
+  );
+
   const commentResult = await db.query("SELECT article_id FROM comments");
   const commentCount = {};
 
@@ -98,6 +108,21 @@ app.patch("/api/articles/:article_id", async (req, res) => {
   );
 
   res.send(rows);
+});
+
+app.delete("/api/comments/:comment_id", async (req, res) => {
+  const { comment_id } = req.params;
+
+  const { rows } = await db.query(
+    `
+      DELETE FROM comments
+      WHERE comment_id = $1
+    `,
+    [comment_id]
+  );
+
+  res.status(204);
+  res.end();
 });
 
 module.exports = app;

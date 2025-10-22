@@ -54,20 +54,46 @@ describe("GET", () => {
       });
   });
 
+  test("GET articles sort articles by created_at descending by default", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        for (let i = 0; i < body.length - 1; i++) {
+          expect(body[i].created_at >= body[i + 1].created_at).toBe(true);
+        }
+      });
+  });
+
+  test("GET takes a sort_by query which sort the the article by any valid column", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        for (let i = 0; i < body.length - 1; i++) {
+          expect(body[i].votes <= body[i + 1].votes).toBe(true);
+        }
+      });
+  });
+
   test("comment_count has the correct count", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        let commentCount = 0;
+        let commentCountInData = 0;
+        let commentCountByRequest;
         data.commentData.forEach((comment) => {
           if (comment.article_title === "Living in the shadow of a great man") {
-            commentCount++;
+            commentCountInData++;
           }
         });
-        const { article_id, comment_count } = body[0];
-        expect(article_id).toBe(1);
-        expect(comment_count).toBe(commentCount);
+        body.forEach((article) => {
+          if (article.article_id === 1) {
+            commentCountByRequest = article.comment_count;
+          }
+        });
+        expect(commentCountByRequest).toBe(commentCountInData);
       });
   });
 
@@ -178,6 +204,17 @@ describe("PATCH", () => {
         expect(body[0].votes).toBe(
           data.articleData[0].votes + patchBody.inc_votes
         );
+      });
+  });
+});
+
+describe("DELETE", () => {
+  test("DELETE /api/comments/:comment_id deletes the comment and has a status code 204", () => {
+    return request(app)
+      .delete("/api/comments/3")
+      .expect(204)
+      .then(() => {
+        return request(app).get("/api/comments/3").expect(404);
       });
   });
 });

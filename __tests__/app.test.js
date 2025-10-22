@@ -85,4 +85,71 @@ describe("GET", () => {
         });
       });
   });
+
+  test("GET articles by ID", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body: responseBody }) => {
+        const {
+          article_id,
+          title,
+          topic,
+          author,
+          body,
+          created_at,
+          votes,
+          article_img_url,
+        } = responseBody[0];
+        expect(typeof article_id).toBe("number");
+        expect(typeof title).toBe("string");
+        expect(typeof topic).toBe("string");
+        expect(typeof author).toBe("string");
+        expect(typeof body).toBe("string");
+        expect(typeof created_at).toBe("string");
+        expect(typeof votes).toBe("number");
+        expect(typeof article_img_url).toBe("string");
+      });
+  });
+
+  test("GET comments from an article", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((comment) => {
+          const { comment_id, votes, created_at, author, body, article_id } =
+            comment;
+          expect(typeof comment_id).toBe("number");
+          expect(typeof votes).toBe("number");
+          expect(typeof created_at).toBe("string");
+          expect(typeof author).toBe("string");
+          expect(typeof body).toBe("string");
+          expect(typeof article_id).toBe("number");
+        });
+      });
+  });
+});
+
+describe("POST", () => {
+  test("POST a comment to an article", () => {
+    const commentBody = {
+      body: "Test text",
+      author: "butter_bridge",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(commentBody)
+      .expect(201)
+      .then(({ body: responseBody }) => {
+        const { comment_id, votes, created_at, author, body, article_id } =
+          responseBody[0];
+        expect(comment_id).toBe(data.commentData.length + 1);
+        expect(votes).toBe(0);
+        expect(typeof created_at).toBe("string");
+        expect(author).toBe("butter_bridge");
+        expect(body).toBe("Test text");
+        expect(article_id).toBe(2);
+      });
+  });
 });

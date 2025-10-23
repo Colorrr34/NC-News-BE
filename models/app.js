@@ -26,16 +26,27 @@ const readUsers = () => {
 };
 
 const readArticlesbyId = (article_id) => {
-  return db.query(
-    `
+  return db
+    .query(
+      `
       SELECT articles.*, CAST(count(comments.article_id) AS integer) as comment_count 
       FROM articles LEFT JOIN comments
       ON articles.article_id = comments.article_id
       WHERE articles.article_id = $1
       GROUP BY articles.article_id 
     `,
-    [article_id]
-  );
+      [article_id]
+    )
+    .then(({ rows: [article] }) => {
+      if (article) {
+        return article;
+      } else {
+        return Promise.reject({
+          status: 404,
+          msg: `Article ${article_id} Not Found`,
+        });
+      }
+    });
 };
 
 const readCommentsByArticleId = (article_id) => {

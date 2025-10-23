@@ -19,9 +19,13 @@ const getTopics = async (req, res) => {
 const getArticles = async (req, res) => {
   const { sort_by = "created_at", order = "desc", topic = "%%" } = req.query;
 
-  const { rows } = await readArticles(sort_by, order.toUpperCase(), topic);
+  const { rows: articles } = await readArticles(
+    sort_by,
+    order.toUpperCase(),
+    topic
+  );
 
-  res.send(rows);
+  res.send(articles);
 };
 
 const getUsers = async (req, res) => {
@@ -33,9 +37,7 @@ const getUsers = async (req, res) => {
 const getArticlesById = async (req, res) => {
   const { article_id } = req.params;
 
-  const {
-    rows: [article],
-  } = await readArticlesbyId(article_id);
+  const article = await readArticlesbyId(article_id);
 
   res.send(article);
 };

@@ -137,14 +137,16 @@ describe("GET", () => {
           created_at,
           votes,
           article_img_url,
-        } = responseBody[0];
-        expect(typeof article_id).toBe("number");
-        expect(typeof title).toBe("string");
-        expect(typeof topic).toBe("string");
-        expect(typeof author).toBe("string");
-        expect(typeof body).toBe("string");
+        } = responseBody;
+        expect(article_id).toBe(2);
+        expect(title).toBe("Sony Vaio; or, The Laptop");
+        expect(topic).toBe("mitch");
+        expect(author).toBe("icellusedkars");
+        expect(body).toBe(
+          "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me."
+        );
         expect(typeof created_at).toBe("string");
-        expect(typeof votes).toBe("number");
+        expect(votes).toBe(0);
         expect(typeof article_img_url).toBe("string");
       });
   });
@@ -154,7 +156,7 @@ describe("GET", () => {
       .get("/api/articles/2")
       .expect(200)
       .then(({ body }) => {
-        expect(typeof body[0].comment_count).toBe("number");
+        expect(typeof body.comment_count).toBe("number");
       });
   });
 
@@ -189,7 +191,7 @@ describe("POST", () => {
       .expect(201)
       .then(({ body: responseBody }) => {
         const { comment_id, votes, created_at, author, body, article_id } =
-          responseBody[0];
+          responseBody;
         expect(comment_id).toBe(data.commentData.length + 1);
         expect(votes).toBe(0);
         expect(typeof created_at).toBe("string");
@@ -208,7 +210,7 @@ describe("PATCH", () => {
       .send(patchBody)
       .expect(200)
       .then(({ body }) => {
-        expect(body[0].votes).toBe(
+        expect(body.votes).toBe(
           data.articleData[0].votes + patchBody.inc_votes
         );
       });
@@ -221,7 +223,7 @@ describe("PATCH", () => {
       .send(patchBody)
       .expect(200)
       .then(({ body }) => {
-        expect(body[0].votes).toBe(
+        expect(body.votes).toBe(
           data.articleData[0].votes + patchBody.inc_votes
         );
       });

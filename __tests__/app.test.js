@@ -201,7 +201,7 @@ describe("GET", () => {
           .get("/api/articles/50")
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Article 50 Not Found");
+            expect(msg).toBe("Article 50 Does Not Exist");
           });
       });
     });
@@ -229,6 +229,22 @@ describe("POST", () => {
           expect(body).toBe("Test text");
           expect(article_id).toBe(2);
         });
+    });
+
+    describe("Error handling", () => {
+      test("POST request in non-existing article has a response of status code 404 and error message", () => {
+        const commentBody = {
+          body: "Test text",
+          author: "butter_bridge",
+        };
+        return request(app)
+          .post("/api/articles/50/comments")
+          .send(commentBody)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Article 50 Does Not Exist");
+          });
+      });
     });
   });
 });
@@ -258,6 +274,19 @@ describe("PATCH", () => {
           data.articleData[0].votes + patchBody.inc_votes
         );
       });
+  });
+
+  describe("Error handling", () => {
+    test("PATCH request in non-existing article has a response of status code 404 and error message", () => {
+      const patchBody = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/50")
+        .send(patchBody)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Article 50 Does Not Exist");
+        });
+    });
   });
 });
 

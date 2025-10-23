@@ -53,10 +53,20 @@ const getCommentsByArticleId = async (req, res) => {
 const postCommentToArticle = async (req, res) => {
   const { body: commentBody, author } = req.body;
   const { article_id } = req.params;
+  let comment;
 
-  const {
-    rows: [comment],
-  } = await createCommentInArticle(commentBody, author, article_id);
+  try {
+    const {
+      rows: [result],
+    } = await createCommentInArticle(commentBody, author, article_id);
+    comment = result;
+  } catch (err) {
+    if (err.code === "23503") {
+      res.status(404).send({ msg: `Article ${article_id} Does Not Exist` });
+    } else {
+      res.status(500).send({ msg: "Internet Server Error" });
+    }
+  }
 
   res.status(201).send(comment);
 };
@@ -65,9 +75,16 @@ const patchArticleVotes = async (req, res) => {
   const { inc_votes } = req.body;
   const { article_id } = req.params;
 
-  const {
-    rows: [article],
-  } = await updateArticleVotes(inc_votes, article_id);
+  let article;
+
+  try {
+    const [result] = await updateArticleVotes(inc_votes, article_id);
+    article = result;
+  } catch (err) {
+    if (err.status === 404) {
+      res.status(404).send({ msg: err.msg });
+    }
+  }
 
   res.send(article);
 };

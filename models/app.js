@@ -43,7 +43,7 @@ const readArticlesbyId = (article_id) => {
       } else {
         return Promise.reject({
           status: 404,
-          msg: `Article ${article_id} Not Found`,
+          msg: `Article ${article_id} Does Not Exist`,
         });
       }
     });
@@ -61,26 +61,41 @@ const readCommentsByArticleId = (article_id) => {
 };
 
 const createCommentInArticle = (commentBody, author, article_id) => {
-  return db.query(
-    `
+  return db
+    .query(
+      `
       INSERT INTO comments(body, author, article_id) 
       VALUES ($1, $2, $3)
       RETURNING *
     `,
-    [commentBody, author, article_id]
-  );
+      [commentBody, author, article_id]
+    )
+    .catch((err) => {
+      return Promise.reject(err);
+    });
 };
 
 const updateArticleVotes = (inc_votes, article_id) => {
-  return db.query(
-    `
+  return db
+    .query(
+      `
       UPDATE articles
       SET votes = votes + $1
       WHERE article_id = $2
       RETURNING *
     `,
-    [inc_votes, article_id]
-  );
+      [inc_votes, article_id]
+    )
+    .then(({ rows }) => {
+      if (rows.length > 0) {
+        return rows;
+      } else {
+        return Promise.reject({
+          status: 404,
+          msg: `Article ${article_id} Does Not Exist`,
+        });
+      }
+    });
 };
 
 const deleteCommentinModel = (comment_id) => {

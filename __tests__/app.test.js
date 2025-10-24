@@ -13,9 +13,9 @@ describe("GET", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
-        .then(({ body }) => {
-          expect(body.length).toBe(data.topicData.length);
-          body.forEach((topic) => {
+        .then(({ body: { topics } }) => {
+          expect(topics.length).toBe(data.topicData.length);
+          topics.forEach((topic) => {
             const { slug, description, img_url } = topic;
             expect(typeof slug).toBe("string");
             expect(typeof description).toBe("string");
@@ -30,9 +30,9 @@ describe("GET", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
-        .then(({ body }) => {
-          expect(body.length).toBe(data.articleData.length);
-          body.forEach((article) => {
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(data.articleData.length);
+          articles.forEach((article) => {
             const {
               article_id,
               title,
@@ -61,9 +61,11 @@ describe("GET", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
-        .then(({ body }) => {
-          for (let i = 0; i < body.length - 1; i++) {
-            expect(body[i].created_at >= body[i + 1].created_at).toBe(true);
+        .then(({ body: { articles } }) => {
+          for (let i = 0; i < articles.length - 1; i++) {
+            expect(articles[i].created_at >= articles[i + 1].created_at).toBe(
+              true
+            );
           }
         });
     });
@@ -72,9 +74,9 @@ describe("GET", () => {
       return request(app)
         .get("/api/articles?sort_by=votes&order=asc")
         .expect(200)
-        .then(({ body }) => {
-          for (let i = 0; i < body.length - 1; i++) {
-            expect(body[i].votes <= body[i + 1].votes).toBe(true);
+        .then(({ body: { articles } }) => {
+          for (let i = 0; i < articles.length - 1; i++) {
+            expect(articles[i].votes <= articles[i + 1].votes).toBe(true);
           }
         });
     });
@@ -83,8 +85,8 @@ describe("GET", () => {
       return request(app)
         .get("/api/articles?topic=mitch")
         .expect(200)
-        .then(({ body }) => {
-          body.forEach((article) => {
+        .then(({ body: { articles } }) => {
+          articles.forEach((article) => {
             expect(article.topic).toBe("mitch");
           });
         });
@@ -94,7 +96,7 @@ describe("GET", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
-        .then(({ body }) => {
+        .then(({ body: { articles } }) => {
           let commentCountInData = 0;
           let commentCountByRequest;
           data.commentData.forEach((comment) => {
@@ -104,7 +106,7 @@ describe("GET", () => {
               commentCountInData++;
             }
           });
-          body.forEach((article) => {
+          articles.forEach((article) => {
             if (article.article_id === 1) {
               commentCountByRequest = article.comment_count;
             }
@@ -119,9 +121,9 @@ describe("GET", () => {
       return request(app)
         .get("/api/users")
         .expect(200)
-        .then(({ body }) => {
-          expect(body.length).toBe(data.userData.length);
-          body.forEach((user) => {
+        .then(({ body: { users } }) => {
+          expect(users.length).toBe(data.userData.length);
+          users.forEach((user) => {
             const { username, name, avatar_url } = user;
             expect(typeof username).toBe("string");
             expect(typeof name).toBe("string");
@@ -136,7 +138,7 @@ describe("GET", () => {
       return request(app)
         .get("/api/articles/2")
         .expect(200)
-        .then(({ body: responseBody }) => {
+        .then(({ body: article }) => {
           const {
             article_id,
             title,
@@ -146,7 +148,7 @@ describe("GET", () => {
             created_at,
             votes,
             article_img_url,
-          } = responseBody;
+          } = article;
           expect(article_id).toBe(2);
           expect(title).toBe("Sony Vaio; or, The Laptop");
           expect(topic).toBe("mitch");
@@ -164,35 +166,9 @@ describe("GET", () => {
       return request(app)
         .get("/api/articles/2")
         .expect(200)
-        .then(({ body }) => {
-          expect(typeof body.comment_count).toBe("number");
+        .then(({ body: article }) => {
+          expect(typeof article.comment_count).toBe("number");
         });
-    });
-
-    describe("GET comments by article ID", () => {
-      test("response has the correct set of data", () => {
-        return request(app)
-          .get("/api/articles/2/comments")
-          .expect(200)
-          .then(({ body }) => {
-            body.forEach((comment) => {
-              const {
-                comment_id,
-                votes,
-                created_at,
-                author,
-                body,
-                article_id,
-              } = comment;
-              expect(typeof comment_id).toBe("number");
-              expect(typeof votes).toBe("number");
-              expect(typeof created_at).toBe("string");
-              expect(typeof author).toBe("string");
-              expect(typeof body).toBe("string");
-              expect(typeof article_id).toBe("number");
-            });
-          });
-      });
     });
 
     describe("Error handling", () => {
@@ -201,7 +177,47 @@ describe("GET", () => {
           .get("/api/articles/50")
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Article 50 Does Not Exist");
+            expect(msg).toBe("Article Not Found");
+          });
+      });
+    });
+  });
+
+  describe("GET comments by article ID", () => {
+    test("response has the correct set of data", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body: { articleComments } }) => {
+          articleComments.forEach((comment) => {
+            const { comment_id, votes, created_at, author, body, article_id } =
+              comment;
+            expect(typeof comment_id).toBe("number");
+            expect(typeof votes).toBe("number");
+            expect(typeof created_at).toBe("string");
+            expect(typeof author).toBe("string");
+            expect(typeof body).toBe("string");
+            expect(typeof article_id).toBe("number");
+          });
+        });
+    });
+
+    test("GET comment in a article with no comment should respond with an emtpy array", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then(({ body: { articleComments } }) => {
+          expect(articleComments.length).toBe(0);
+        });
+    });
+
+    describe("Error handling", () => {
+      test("GET comments from non-existing article responds with a status code 404 and an error message", () => {
+        return request(app)
+          .get("/api/articles/50/comments")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Not Found");
           });
       });
     });
@@ -242,7 +258,7 @@ describe("POST", () => {
           .send(commentBody)
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Article 50 Does Not Exist");
+            expect(msg).toBe("Not Found");
           });
       });
     });
@@ -293,12 +309,20 @@ describe("PATCH", () => {
 describe("DELETE", () => {
   describe("DELETE comment", () => {
     test("DELETE /api/comments/:comment_id deletes the comment and has a status code 204", () => {
-      return request(app)
-        .delete("/api/comments/3")
-        .expect(204)
-        .then(() => {
-          return request(app).get("/api/comments/3").expect(404);
-        });
+      return request(app).delete("/api/comments/3").expect(204);
+    });
+
+    describe("Error handling", () => {
+      test("DELETE non-existing comment has a response of status code 404 and error message", () => {
+        const patchBody = { inc_votes: 1 };
+        return request(app)
+          .delete("/api/comments/300")
+          .send(patchBody)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Not Found");
+          });
+      });
     });
   });
 });
@@ -307,7 +331,7 @@ describe("Error handling for invalid path", () => {
   test("GET invalid path should have a status code 404 and response message", () => {
     return request(app)
       .get("/invalid-path")
-      .expect(404)
+      .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Invalid Path");
       });

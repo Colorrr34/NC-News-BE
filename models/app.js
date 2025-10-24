@@ -6,19 +6,24 @@ const readTopics = () => {
 };
 
 const readArticles = (sort_by, order, topic) => {
-  return db.query(
-    format(
-      `SELECT articles.*, CAST(count(comments.article_id) AS INTEGER) as comment_count
+  return db
+    .query(
+      format(
+        `SELECT articles.*, CAST(count(comments.article_id) AS INTEGER) as comment_count
       FROM articles LEFT JOIN comments
       on articles.article_id = comments.article_id
       WHERE topic LIKE $1 
       GROUP BY articles.article_id
-      ORDER BY %s %s `,
-      sort_by,
-      order
-    ),
-    [topic]
-  );
+      ORDER BY %I %s `,
+        sort_by,
+        order
+      ),
+      [topic]
+    )
+    .catch((err) => {
+      console.log(err);
+      return Promise.reject(err);
+    });
 };
 
 const readUsers = () => {
@@ -43,21 +48,25 @@ const readArticlesbyId = (article_id) => {
       } else {
         return Promise.reject({
           status: 404,
-          msg: `Article ${article_id} Does Not Exist`,
+          msg: `Article Not Found`,
         });
       }
     });
 };
 
 const readCommentsByArticleId = (article_id) => {
-  return db.query(
-    `
+  return db
+    .query(
+      `
       SELECT * 
       FROM comments
       WHERE article_id = $1
     `,
-    [article_id]
-  );
+      [article_id]
+    )
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 const createCommentInArticle = (commentBody, author, article_id) => {

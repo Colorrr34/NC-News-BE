@@ -11,6 +11,12 @@ const {
   patchArticleVotes,
   deleteComment,
 } = require("./controllers/app");
+const {
+  invalidPathHandler,
+  errorStatusHandler,
+  psqlErrorHandler,
+  status500Handler,
+} = require("./controllers/error-handler");
 
 app.use(express.json());
 
@@ -30,24 +36,12 @@ app.patch("/api/articles/:article_id", patchArticleVotes);
 
 app.delete("/api/comments/:comment_id", deleteComment);
 
-app.use((req, res) => {
-  res.status(404).send({ msg: "Invalid Path" });
-});
+app.use(invalidPathHandler);
 
-app.use((err, req, res, next) => {
-  if (err.status) {
-    res.status(err.status).send({ msg: err.msg });
-  } else next(err);
-});
+app.use(errorStatusHandler);
 
-app.use((err, req, res, next) => {
-  if (err.code === "22P02") {
-    res.status(400).send({ msg: "Invalid query" });
-  }
-});
+app.use(psqlErrorHandler);
 
-app.use((err, req, res, next) => {
-  res.status(500).send({ msg: "Internet Server Error", error: err });
-});
+app.use(status500Handler);
 
 module.exports = app;

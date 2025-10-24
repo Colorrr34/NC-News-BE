@@ -9,92 +9,85 @@ const {
   updateArticleVotes,
   deleteCommentinModel,
 } = require("../models/app");
+const { readRowInColumn } = require("../models/utils");
 
-const getTopics = async (req, res) => {
-  const { rows: topics } = await readTopics();
-
-  res.send(topics);
+const getTopics = (req, res) => {
+  return readTopics().then(({ rows }) => {
+    res.send({ topics: rows });
+  });
 };
 
-const getArticles = async (req, res) => {
+const getArticles = (req, res) => {
   const { sort_by = "created_at", order = "desc", topic = "%%" } = req.query;
 
-  const { rows: articles } = await readArticles(
+  return readArticles(
     sort_by,
-    order.toUpperCase(),
+    order === "desc" || order === "asc" ? order.toUpperCase() : "DESC",
     topic
+  ).then(({ rows }) => {
+    res.send({ articles: rows });
+  });
+};
+
+const getUsers = (req, res) => {
+  return readUsers().then(({ rows }) => {
+    res.send({ users: rows });
+  });
+};
+
+const getArticlesById = (req, res) => {
+  const { article_id } = req.params;
+
+  return readArticlesbyId(article_id).then((article) => {
+    res.send(article);
+  });
+};
+
+const getCommentsByArticleId = (req, res) => {
+  const { article_id } = req.params;
+
+  const commentsByArticleId = readCommentsByArticleId(article_id);
+
+  const articleIdCheck = readRowInColumn("articles", "article_id", article_id);
+
+  return Promise.all([commentsByArticleId, articleIdCheck]).then(
+    ([commentsByArticleId]) => {
+      const { rows } = commentsByArticleId;
+      res.send({ articleComments: rows });
+    }
   );
-
-  res.send(articles);
 };
 
-const getUsers = async (req, res) => {
-  const { rows: users } = await readUsers();
-
-  res.send(users);
-};
-
-const getArticlesById = async (req, res) => {
-  const { article_id } = req.params;
-
-  const article = await readArticlesbyId(article_id);
-
-  res.send(article);
-};
-
-const getCommentsByArticleId = async (req, res) => {
-  const { article_id } = req.params;
-
-  const { rows: articleComments } = await readCommentsByArticleId(article_id);
-
-  res.send(articleComments);
-};
-
-const postCommentToArticle = async (req, res) => {
+const postCommentToArticle = (req, res) => {
   const { body: commentBody, author } = req.body;
   const { article_id } = req.params;
-  let comment;
 
-  try {
-    const {
-      rows: [result],
-    } = await createCommentInArticle(commentBody, author, article_id);
-    comment = result;
-  } catch (err) {
-    if (err.code === "23503") {
-      res.status(404).send({ msg: `Article ${article_id} Does Not Exist` });
-    } else {
-      res.status(500).send({ msg: "Internet Server Error" });
+  return createCommentInArticle(commentBody, author, article_id).then(
+    ({ rows: [comment] }) => {
+      res.status(201).send(comment);
     }
-  }
-
-  res.status(201).send(comment);
+  );
 };
 
-const patchArticleVotes = async (req, res) => {
+const patchArticleVotes = (req, res) => {
   const { inc_votes } = req.body;
   const { article_id } = req.params;
 
-  let article;
-
-  try {
-    const [result] = await updateArticleVotes(inc_votes, article_id);
-    article = result;
-  } catch (err) {
-    if (err.status === 404) {
-      res.status(404).send({ msg: err.msg });
-    }
-  }
-
-  res.send(article);
+  return updateArticleVotes(inc_votes, article_id).then(([article]) => {
+    res.send(article);
+  });
 };
 
 const deleteComment = async (req, res) => {
   const { comment_id } = req.params;
 
-  await deleteCommentinModel(comment_id);
-
-  res.status(204).send();
+  return readRowInColumn("comments", "comment_id", comment_id)
+    .then(() => {
+      return deleteCommentinModel(comment_id);
+    })
+    .then(() => {
+      res.status(204).send();
+    });
 };
 
 module.exports = {

@@ -10,7 +10,7 @@ const {
   postCommentToArticle,
   patchArticleVotes,
   deleteComment,
-} = require("./controllers/app");
+} = require("./controllers/request-controller");
 const {
   invalidPathHandler,
   errorStatusHandler,

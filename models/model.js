@@ -1,6 +1,19 @@
 const db = require("../db/connection");
 const format = require("pg-format");
 
+const readRowInColumn = (table, columnName, value) => {
+  return db
+    .query(`SELECT * FROM ${table} WHERE ${columnName} = $1`, [value])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `Not Found`,
+        });
+      } else return rows;
+    });
+};
+
 const readTopics = () => {
   return db.query("SELECT * FROM topics");
 };
@@ -118,6 +131,7 @@ const deleteCommentinModel = (comment_id) => {
 };
 
 module.exports = {
+  readRowInColumn,
   readTopics,
   readArticles,
   readUsers,

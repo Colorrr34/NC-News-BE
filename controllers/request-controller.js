@@ -1,5 +1,6 @@
 const db = require("../db/connection");
 const {
+  readRowInColumn,
   readTopics,
   readArticles,
   readUsers,
@@ -8,8 +9,7 @@ const {
   createCommentInArticle,
   updateArticleVotes,
   deleteCommentinModel,
-} = require("../models/app");
-const { readRowInColumn } = require("../models/utils");
+} = require("../models/model");
 
 const getTopics = (req, res) => {
   return readTopics().then(({ rows }) => {

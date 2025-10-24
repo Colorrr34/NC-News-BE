@@ -3,7 +3,7 @@ const {
   readTopics,
   readArticles,
   readUsers,
-  readArticlesbyId,
+  readArticleById,
   readCommentsByArticleId,
   createCommentInArticle,
   updateArticleVotes,
@@ -35,10 +35,10 @@ const getUsers = (req, res) => {
   });
 };
 
-const getArticlesById = (req, res) => {
+const getArticleById = (req, res) => {
   const { article_id } = req.params;
 
-  return readArticlesbyId(article_id).then((article) => {
+  return readArticleById(article_id).then((article) => {
     res.send(article);
   });
 };
@@ -94,7 +94,7 @@ module.exports = {
   getTopics,
   getArticles,
   getUsers,
-  getArticlesById,
+  getArticleById,
   getCommentsByArticleId,
   postCommentToArticle,
   patchArticleVotes,

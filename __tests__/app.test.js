@@ -327,7 +327,7 @@ describe("DELETE", () => {
   });
 });
 
-describe("Error handling for invalid path", () => {
+describe("General Error Handling", () => {
   test("GET invalid path should have a status code 404 and response message", () => {
     return request(app)
       .get("/invalid-path")

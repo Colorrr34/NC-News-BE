@@ -9,6 +9,6 @@ exports.readRowInColumn = (table, columnName, value) => {
           status: 404,
           msg: `Not Found`,
         });
-      } else return rows[0];
+      } else return rows;
     });
 };

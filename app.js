@@ -5,7 +5,7 @@ const {
   getTopics,
   getArticles,
   getUsers,
-  getArticlesById,
+  getArticleById,
   getCommentsByArticleId,
   postCommentToArticle,
   patchArticleVotes,
@@ -26,7 +26,7 @@ app.get("/api/articles", getArticles);
 
 app.get("/api/users", getUsers);
 
-app.get("/api/articles/:article_id", getArticlesById);
+app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 

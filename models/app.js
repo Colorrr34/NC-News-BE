@@ -30,7 +30,7 @@ const readUsers = () => {
   return db.query("SELECT * FROM users");
 };
 
-const readArticlesbyId = (article_id) => {
+const readArticleById = (article_id) => {
   return db
     .query(
       `
@@ -121,7 +121,7 @@ module.exports = {
   readTopics,
   readArticles,
   readUsers,
-  readArticlesbyId,
+  readArticleById,
   readCommentsByArticleId,
   createCommentInArticle,
   updateArticleVotes,

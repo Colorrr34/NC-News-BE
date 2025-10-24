@@ -1,5 +1,5 @@
 const db = require("../connection");
-const { format } = require("node-pg-format");
+const format = require("pg-format");
 
 const seed = ({
   topicData,

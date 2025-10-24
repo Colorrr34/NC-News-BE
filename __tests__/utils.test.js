@@ -1,4 +1,3 @@
-const { get } = require("node:https");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const {

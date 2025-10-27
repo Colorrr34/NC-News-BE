@@ -3,6 +3,7 @@ const db = require("../db/connection.js");
 const request = require("supertest");
 const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data");
+require("jest-sorted");
 
 beforeEach(() => seed(data));
 
@@ -62,23 +63,29 @@ describe("GET", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body: { articles } }) => {
-          for (let i = 0; i < articles.length - 1; i++) {
-            expect(articles[i].created_at >= articles[i + 1].created_at).toBe(
-              true
-            );
-          }
+          expect(articles).toBeSortedBy("created_at", { descending: true });
         });
     });
 
     test("GET takes a sort_by query which sort the the article by any valid column", () => {
-      return request(app)
-        .get("/api/articles?sort_by=votes&order=asc")
-        .expect(200)
-        .then(({ body: { articles } }) => {
-          for (let i = 0; i < articles.length - 1; i++) {
-            expect(articles[i].votes <= articles[i + 1].votes).toBe(true);
-          }
-        });
+      const tableArray = [
+        "article_id",
+        "topic",
+        "author",
+        "body",
+        "votes",
+        "article_img_url",
+      ];
+      return Promise.all(
+        tableArray.map((table) => {
+          return request(app)
+            .get(`/api/articles?sort_by=${table}&order=asc`)
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              return expect(articles).toBeSortedBy(table);
+            });
+        })
+      );
     });
 
     test("GET articles takes a topic query which filters the topic of the articles", () => {

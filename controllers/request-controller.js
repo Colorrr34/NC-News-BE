@@ -1,15 +1,14 @@
-const db = require("../db/connection");
 const {
   readRowInColumn,
   readTopics,
-  readArticles,
   readUsers,
+  readArticles,
   readArticleById,
+  updateArticleVotes,
   readCommentsByArticleId,
   createCommentInArticle,
-  updateArticleVotes,
   deleteCommentinModel,
-} = require("../models/model");
+} = require("../models/index");
 
 const getTopics = (req, res) => {
   return readTopics().then(({ rows }) => {

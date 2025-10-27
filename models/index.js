@@ -5,6 +5,7 @@ const {
   readArticles,
   readArticleById,
   updateArticleVotes,
+  createArticle,
 } = require("./articles");
 const {
   readCommentsByArticleId,
@@ -21,6 +22,7 @@ module.exports = {
   readArticles,
   readArticleById,
   updateArticleVotes,
+  createArticle,
   readCommentsByArticleId,
   createCommentInArticle,
   updateCommentVotes,

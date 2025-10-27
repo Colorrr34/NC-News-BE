@@ -7,7 +7,7 @@ const {
   getCommentsByArticleId,
 } = require("./get-controller");
 
-const { postCommentToArticle } = require("./post-controller");
+const { postCommentToArticle, postArticle } = require("./post-controller");
 
 const { patchArticleVotes, patchCommentVote } = require("./patch-controller");
 
@@ -21,6 +21,7 @@ module.exports = {
   getArticleById,
   getCommentsByArticleId,
   postCommentToArticle,
+  postArticle,
   patchArticleVotes,
   patchCommentVote,
   deleteComment,

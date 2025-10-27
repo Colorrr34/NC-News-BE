@@ -26,6 +26,9 @@ exports.createCommentInArticle = (commentBody, author, article_id) => {
       [commentBody, author, article_id]
     )
     .catch((err) => {
+      if (err.code === "23503") {
+        return Promise.reject({ status: 404, msg: "Article Not Found" });
+      }
       return Promise.reject(err);
     });
 };

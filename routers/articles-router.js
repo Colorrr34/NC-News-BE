@@ -5,9 +5,10 @@ const {
   getCommentsByArticleId,
   postCommentToArticle,
   patchArticleVotes,
+  postArticle,
 } = require("../controllers/index");
 
-articlesRouter.get("/", getArticles);
+articlesRouter.route("/").get(getArticles).post(postArticle);
 
 articlesRouter
   .route("/:article_id")

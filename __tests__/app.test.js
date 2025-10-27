@@ -258,7 +258,7 @@ describe("GET", () => {
 
 describe("POST", () => {
   describe("POST comment", () => {
-    test("suscessfully creates a comment and responses with the posted comment", () => {
+    test("suscessfully create a comment and get a response with the posted comment", () => {
       const commentBody = {
         body: "Test text",
         author: "butter_bridge",
@@ -290,7 +290,87 @@ describe("POST", () => {
           .send(commentBody)
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Not Found");
+            expect(msg).toBe("Article Not Found");
+          });
+      });
+    });
+  });
+
+  describe("POST articles", () => {
+    test("successfully create an article and get a response with the article", () => {
+      const articleBody = {
+        title: "Test Title",
+        topic: "cats",
+        author: "butter_bridge",
+        body: "Test Body",
+        article_img_url: "https://test_url",
+      };
+
+      return request(app)
+        .post("/api/articles")
+        .send(articleBody)
+        .expect(201)
+        .then(({ body: { article } }) => {
+          expect(article.article_id).toBe(data.articleData.length + 1);
+          expect(article.title).toBe("Test Title");
+          expect(article.topic).toBe("cats");
+          expect(article.author).toBe("butter_bridge");
+          expect(article.votes).toBe(0);
+          expect(typeof article.created_at).toEqual("string");
+          expect(article.article_img_url).toBe("https://test_url");
+        });
+    });
+
+    test("article has a default image if article_img_url is left empty", () => {
+      const articleBody = {
+        title: "Test Title",
+        topic: "cats",
+        author: "butter_bridge",
+        body: "Test Body",
+      };
+
+      return request(app)
+        .post("/api/articles")
+        .send(articleBody)
+        .expect(201)
+        .then(({ body: { article } }) => {
+          expect(article.article_img_url).toBe(
+            "https://images.pexels.com/photos/518543/pexels-photo-518543.jpeg"
+          );
+        });
+    });
+
+    describe("Error handling", () => {
+      test("User not found", () => {
+        const articleBody = {
+          title: "Test Title",
+          topic: "cats",
+          author: "Not a user",
+          body: "Test Body",
+        };
+        return request(app)
+          .post("/api/articles")
+          .send(articleBody)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Invalid input for username or topic");
+          });
+      });
+
+      test("topic not found", () => {
+        const articleBody = {
+          title: "Test Title",
+          topic: "not a topic",
+          author: "butter_bridge",
+          body: "Test Body",
+        };
+
+        return request(app)
+          .post("/api/articles")
+          .send(articleBody)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Invalid input for username or topic");
           });
       });
     });

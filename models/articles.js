@@ -69,3 +69,29 @@ exports.updateArticleVotes = (inc_votes, article_id) => {
       }
     });
 };
+
+exports.createArticle = ({
+  title,
+  topic,
+  author,
+  body,
+  article_img_url = "https://images.pexels.com/photos/518543/pexels-photo-518543.jpeg",
+}) => {
+  return db
+    .query(
+      `
+      INSERT INTO articles(title, topic, author, body, article_img_url)
+      VALUES ($1,$2,$3,$4,$5)
+      RETURNING *
+    `,
+      [title, topic, author, body, article_img_url]
+    )
+    .catch((err) => {
+      if (err.code === "23503") {
+        return Promise.reject({
+          status: 400,
+          msg: "Invalid input for username or topic",
+        });
+      }
+    });
+};

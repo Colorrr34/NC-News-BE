@@ -5,6 +5,7 @@ const {
   readArticleById,
   readArticles,
   readCommentsByArticleId,
+  verifyReadArticlesQueries,
 } = require("../models/index");
 
 exports.getTopics = (req, res) => {
@@ -14,11 +15,21 @@ exports.getTopics = (req, res) => {
 };
 
 exports.getArticles = (req, res) => {
-  const { sort_by = "created_at", order = "desc", topic = "%%" } = req.query;
+  const {
+    sort_by = "created_at",
+    order = "desc",
+    topic = "%%",
+    limit = 10,
+    p: page = 1,
+  } = req.query;
 
-  return readArticles(sort_by, order, topic).then(({ rows }) => {
-    res.send({ articles: rows });
-  });
+  return verifyReadArticlesQueries(order, limit, page)
+    .then(() => {
+      return readArticles(sort_by, order, topic, limit, +page);
+    })
+    .then((result) => {
+      res.send(result);
+    });
 };
 
 exports.getUsers = (req, res) => {

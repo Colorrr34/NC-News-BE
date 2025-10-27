@@ -1,4 +1,4 @@
-const { readRowInColumn, verifyInputType } = require("./general");
+const { readRowInColumn } = require("./general");
 const { readTopics } = require("./topics");
 const { readUsers } = require("./users");
 const {
@@ -6,6 +6,7 @@ const {
   readArticleById,
   updateArticleVotes,
   createArticle,
+  verifyReadArticlesQueries,
 } = require("./articles");
 const {
   readCommentsByArticleId,
@@ -16,10 +17,10 @@ const {
 
 module.exports = {
   readRowInColumn,
-  verifyInputType,
   readTopics,
   readUsers,
   readArticles,
+  verifyReadArticlesQueries,
   readArticleById,
   updateArticleVotes,
   createArticle,

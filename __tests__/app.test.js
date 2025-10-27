@@ -9,6 +9,25 @@ beforeEach(() => seed(data));
 
 afterAll(() => db.end());
 describe("GET", () => {
+  describe("GET mainpage", () => {
+    test("GET / directs to /api", () => {
+      return request(app)
+        .get("/")
+        .expect(200)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Please start from /api.");
+        });
+    });
+
+    test("GET /api gets a welcoming message", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Welcome to NC News");
+        });
+    });
+  });
   describe("GET topics", () => {
     test("GET topics from the database", () => {
       return request(app)
@@ -32,7 +51,6 @@ describe("GET", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body: { articles } }) => {
-          expect(articles.length).toBe(data.articleData.length);
           articles.forEach((article) => {
             const {
               article_id,
@@ -120,6 +138,90 @@ describe("GET", () => {
           });
           expect(commentCountByRequest).toBe(commentCountInData);
         });
+    });
+
+    test("GET articles has a pagination defaulted to 10 articles and has a total_count value", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles, total_count } }) => {
+          expect(articles.length).toBe(10);
+          expect(total_count).toBe(data.articleData.length);
+        });
+    });
+
+    test("GET articles has a query to set the limit of articles per page", () => {
+      return request(app)
+        .get("/api/articles?limit=8")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(8);
+        });
+    });
+
+    test("GET articles has a query to select the page shown", () => {
+      return request(app)
+        .get("/api/articles?limit=8&p=2")
+        .expect(200)
+        .then(({ body: { articles, page } }) => {
+          expect(page).toBe(2);
+          expect(articles.length).toBe(5);
+        });
+    });
+
+    describe("Error handling", () => {
+      test("Invalid order query", () => {
+        return request(app)
+          .get("/api/articles?order=invalidinput")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Invalid Queries");
+          });
+      });
+
+      test("p larger than the last page gets a status code of 404 and an error message", () => {
+        return request(app)
+          .get("/api/articles?p=50")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Page Not Found. The last page is 2.");
+          });
+      });
+
+      test("negative p gets an error of status code 400", () => {
+        return request(app)
+          .get("/api/articles?p=-2")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Invalid Queries");
+          });
+      });
+
+      test("negative limit gets an error of status code 400", () => {
+        return request(app)
+          .get("/api/articles?limit=-2")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Invalid Queries");
+          });
+      });
+
+      test("invalid p or limit values gets an error of status code 400", () => {
+        const pPromise = request(app)
+          .get("/api/articles?p=invalid")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Invalid Queries");
+          });
+        const limitPromise = request(app)
+          .get("/api/articles?limit=invalid")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Invalid Queries");
+          });
+
+        return Promise.all([pPromise, limitPromise]);
+      });
     });
   });
 
@@ -485,7 +587,7 @@ describe("General Error Handling", () => {
   test("GET invalid path should have a status code 404 and response message", () => {
     return request(app)
       .get("/invalid-path")
-      .expect(400)
+      .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Invalid Path");
       });

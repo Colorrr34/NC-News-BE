@@ -1,5 +1,5 @@
 exports.invalidPathHandler = (req, res) => {
-  res.status(400).send({ msg: "Invalid Path" });
+  res.status(404).send({ msg: "Invalid Path" });
 };
 
 exports.errorStatusHandler = (err, req, res, next) => {

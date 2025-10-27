@@ -1,9 +1,7 @@
 const db = require("../db/connection");
 const format = require("pg-format");
 
-exports.readArticles = (sort_by, order, topic) => {
-  const orderUpperCase =
-    order === "asc" || order === "desc" ? order.toUpperCase() : "DESC";
+exports.readArticles = (sort_by, order, topic, limit, page) => {
   return db
     .query(
       format(
@@ -14,13 +12,50 @@ exports.readArticles = (sort_by, order, topic) => {
       GROUP BY articles.article_id
       ORDER BY %I %s `,
         sort_by,
-        orderUpperCase
+        order.toUpperCase()
       ),
       [topic]
     )
+    .then(({ rows }) => {
+      const paginatedRows = rows.reduce(
+        (acc, cur) => {
+          const currentPage = Object.keys(acc).length;
+          if (acc[currentPage].length < limit) {
+            acc[currentPage].push(cur);
+          } else {
+            acc[currentPage + 1] = [cur];
+          }
+          return acc;
+        },
+        { 1: [] }
+      );
+      const lastPage = Object.keys(paginatedRows).length;
+      if (!paginatedRows[page]) {
+        return Promise.reject({
+          status: 404,
+          msg: `Page Not Found. The last page is ${lastPage}.`,
+        });
+      }
+      return {
+        articles: paginatedRows[page],
+        total_count: rows.length,
+        page: page,
+      };
+    })
     .catch((err) => {
       return Promise.reject(err);
     });
+};
+
+exports.verifyReadArticlesQueries = (order, limit, page) => {
+  if (
+    !["asc", "desc"].includes(order) ||
+    Math.sign(page) !== 1 ||
+    Math.sign(limit) !== 1
+  ) {
+    return Promise.reject({ status: 400, msg: "Invalid Queries" });
+  }
+  return Promise.resolve();
 };
 
 exports.readArticleById = (article_id) => {

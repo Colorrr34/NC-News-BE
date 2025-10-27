@@ -10,6 +10,10 @@ const apiRouter = require("./routers/api-router");
 
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send({ msg: "Please start from /api." });
+});
+
 app.use("/api", apiRouter);
 
 app.use(invalidPathHandler);

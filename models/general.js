@@ -13,8 +13,3 @@ exports.readRowInColumn = (table, columnName, value, item) => {
       } else return rows[0];
     });
 };
-
-exports.verifyInputType = (input, type) => {
-  console.log(typeof input);
-  return typeof input === type;
-};

@@ -138,6 +138,31 @@ describe("GET", () => {
           });
         });
     });
+
+    test("GET user by username", () => {
+      return request(app)
+        .get("/api/users/rogersop")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          const { username, name, avatar_url } = user;
+          expect(username).toBe("rogersop");
+          expect(name).toBe("paul");
+          expect(avatar_url).toBe(
+            "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+          );
+        });
+    });
+
+    describe("Error handling", () => {
+      test("Username not found", () => {
+        return request(app)
+          .get("/api/users/userdoesntexist")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("User Not Found");
+          });
+      });
+    });
   });
 
   describe("GET article by ID", () => {
@@ -224,7 +249,7 @@ describe("GET", () => {
           .get("/api/articles/50/comments")
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Not Found");
+            expect(msg).toBe("Article Not Found");
           });
       });
     });
@@ -273,42 +298,84 @@ describe("POST", () => {
 });
 
 describe("PATCH", () => {
-  test("PATCH /api/articles/:article_id accepts an object with inc_votes as the key and updates the vote accordingly", () => {
-    const patchBody = { inc_votes: 1 };
-    return request(app)
-      .patch("/api/articles/1")
-      .send(patchBody)
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.votes).toBe(
-          data.articleData[0].votes + patchBody.inc_votes
-        );
-      });
-  });
-
-  test("PATCH accepts negative inc_votes", () => {
-    const patchBody = { inc_votes: -200 };
-    return request(app)
-      .patch("/api/articles/1")
-      .send(patchBody)
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.votes).toBe(
-          data.articleData[0].votes + patchBody.inc_votes
-        );
-      });
-  });
-
-  describe("Error handling", () => {
-    test("PATCH request in non-existing article has a response of status code 404 and error message", () => {
+  describe("PATCH articles", () => {
+    test("PATCH /api/articles/:article_id accepts an object with inc_votes as the key and updates the vote accordingly", () => {
       const patchBody = { inc_votes: 1 };
       return request(app)
-        .patch("/api/articles/50")
+        .patch("/api/articles/1")
         .send(patchBody)
-        .expect(404)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("Article 50 Does Not Exist");
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.votes).toBe(
+            data.articleData[0].votes + patchBody.inc_votes
+          );
         });
+    });
+
+    test("PATCH accepts negative inc_votes", () => {
+      const patchBody = { inc_votes: -200 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(patchBody)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.votes).toBe(
+            data.articleData[0].votes + patchBody.inc_votes
+          );
+        });
+    });
+
+    describe("Error handling", () => {
+      test("PATCH request in non-existing article has a response of status code 404 and error message", () => {
+        const patchBody = { inc_votes: 1 };
+        return request(app)
+          .patch("/api/articles/50")
+          .send(patchBody)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Article Not Found");
+          });
+      });
+    });
+  });
+  describe("PATCH comments", () => {
+    test("PATCH /api/comments/:comment_id accepts an object with inc_votes as the key and updates the vote accordingly", () => {
+      const patchBody = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(patchBody)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.votes).toBe(
+            data.commentData[0].votes + patchBody.inc_votes
+          );
+        });
+    });
+
+    test("PATCH accepts negative inc_votes", () => {
+      const patchBody = { inc_votes: -200 };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(patchBody)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.votes).toBe(
+            data.commentData[0].votes + patchBody.inc_votes
+          );
+        });
+    });
+
+    describe("Error handling", () => {
+      test("PATCH request in non-existing article has a response of status code 404 and error message", () => {
+        const patchBody = { inc_votes: 1 };
+        return request(app)
+          .patch("/api/comments/1000")
+          .send(patchBody)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Comment Not Found");
+          });
+      });
     });
   });
 });
@@ -327,7 +394,7 @@ describe("DELETE", () => {
           .send(patchBody)
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Not Found");
+            expect(msg).toBe("Comment Not Found");
           });
       });
     });

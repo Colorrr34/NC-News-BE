@@ -1,4 +1,4 @@
-const { readRowInColumn } = require("./general");
+const { readRowInColumn, verifyInputType } = require("./general");
 const { readTopics } = require("./topics");
 const { readUsers } = require("./users");
 const {
@@ -9,11 +9,13 @@ const {
 const {
   readCommentsByArticleId,
   createCommentInArticle,
+  updateCommentVotes,
   deleteCommentinModel,
 } = require("./comments");
 
 module.exports = {
   readRowInColumn,
+  verifyInputType,
   readTopics,
   readUsers,
   readArticles,
@@ -21,5 +23,6 @@ module.exports = {
   updateArticleVotes,
   readCommentsByArticleId,
   createCommentInArticle,
+  updateCommentVotes,
   deleteCommentinModel,
 };

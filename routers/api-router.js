@@ -1,5 +1,4 @@
 const apiRouter = require("express").Router();
-const comments = require("../db/data/test-data/comments");
 const articlesRouter = require("./articles-router");
 const topicsRouter = require("./topics-router");
 const usersRouter = require("./users-router");

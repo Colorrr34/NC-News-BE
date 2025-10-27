@@ -5,7 +5,7 @@ const {
   getCommentsByArticleId,
   postCommentToArticle,
   patchArticleVotes,
-} = require("../controllers/request-controller");
+} = require("../controllers/index");
 
 articlesRouter.get("/", getArticles);
 

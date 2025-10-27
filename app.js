@@ -1,16 +1,5 @@
 const express = require("express");
 const app = express();
-const db = require("./db/connection");
-const {
-  getTopics,
-  getArticles,
-  getUsers,
-  getArticleById,
-  getCommentsByArticleId,
-  postCommentToArticle,
-  patchArticleVotes,
-  deleteComment,
-} = require("./controllers/request-controller");
 const {
   invalidPathHandler,
   errorStatusHandler,

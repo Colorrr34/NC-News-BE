@@ -2,6 +2,8 @@ const db = require("../db/connection");
 const format = require("pg-format");
 
 exports.readArticles = (sort_by, order, topic) => {
+  const orderUpperCase =
+    order === "asc" || order === "desc" ? order.toUpperCase() : "DESC";
   return db
     .query(
       format(
@@ -12,7 +14,7 @@ exports.readArticles = (sort_by, order, topic) => {
       GROUP BY articles.article_id
       ORDER BY %I %s `,
         sort_by,
-        order
+        orderUpperCase
       ),
       [topic]
     )
@@ -62,7 +64,7 @@ exports.updateArticleVotes = (inc_votes, article_id) => {
       } else {
         return Promise.reject({
           status: 404,
-          msg: `Article ${article_id} Does Not Exist`,
+          msg: `Article Not Found`,
         });
       }
     });

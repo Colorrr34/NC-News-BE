@@ -9,25 +9,7 @@ beforeEach(() => seed(data));
 
 afterAll(() => db.end());
 describe("GET", () => {
-  describe("GET mainpage", () => {
-    test("GET / directs to /api", () => {
-      return request(app)
-        .get("/")
-        .expect(200)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("Please start from /api.");
-        });
-    });
-
-    test("GET /api gets a welcoming message", () => {
-      return request(app)
-        .get("/api")
-        .expect(200)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("Welcome to NC News");
-        });
-    });
-  });
+  describe("GET mainpage", () => {});
   describe("GET topics", () => {
     test("GET topics from the database", () => {
       return request(app)
@@ -322,8 +304,8 @@ describe("GET", () => {
       return request(app)
         .get("/api/articles/1/comments")
         .expect(200)
-        .then(({ body: { articleComments } }) => {
-          articleComments.forEach((comment) => {
+        .then(({ body: { comments } }) => {
+          comments.forEach((comment) => {
             const { comment_id, votes, created_at, author, body, article_id } =
               comment;
             expect(typeof comment_id).toBe("number");
@@ -340,8 +322,19 @@ describe("GET", () => {
       return request(app)
         .get("/api/articles/2/comments")
         .expect(200)
-        .then(({ body: { articleComments } }) => {
-          expect(articleComments.length).toBe(0);
+        .then(({ body: { comments } }) => {
+          expect(comments.length).toBe(0);
+        });
+    });
+
+    test("Pagination with default values of limit 10 and page 1", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body: { comments, total_count, page } }) => {
+          expect(comments.length).toBe(10);
+          expect(total_count).toBe(11);
+          expect(page).toBe(1);
         });
     });
 

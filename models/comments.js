@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-exports.readCommentsByArticleId = (article_id) => {
+exports.readCommentsByArticleId = (article_id, limit, page) => {
   return db
     .query(
       `
@@ -10,6 +10,32 @@ exports.readCommentsByArticleId = (article_id) => {
     `,
       [article_id]
     )
+    .then(({ rows }) => {
+      const paginatedRows = rows.reduce(
+        (acc, cur) => {
+          const currentPage = Object.keys(acc).length;
+          if (acc[currentPage].length < limit) {
+            acc[currentPage].push(cur);
+          } else {
+            acc[currentPage + 1] = [cur];
+          }
+          return acc;
+        },
+        { 1: [] }
+      );
+      const lastPage = Object.keys(paginatedRows).length;
+      if (!paginatedRows[page]) {
+        return Promise.reject({
+          status: 404,
+          msg: `Page Not Found. The last page is ${lastPage}.`,
+        });
+      }
+      return {
+        comments: paginatedRows[page],
+        total_count: rows.length,
+        page: page,
+      };
+    })
     .catch((err) => {
       console.log(err);
     });

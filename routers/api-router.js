@@ -1,12 +1,11 @@
 const apiRouter = require("express").Router();
+const express = require("express");
 const articlesRouter = require("./articles-router");
 const topicsRouter = require("./topics-router");
 const usersRouter = require("./users-router");
 const commentsRouter = require("./comments-router");
 
-apiRouter.get("/", (req, res) => {
-  res.send({ msg: "Welcome to NC News" });
-});
+apiRouter.get("/", express.static("./public"));
 
 apiRouter.use("/topics", topicsRouter);
 

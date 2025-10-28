@@ -55,9 +55,10 @@ exports.getArticleById = (req, res) => {
 };
 
 exports.getCommentsByArticleId = (req, res) => {
+  const { limit = 10, p: page = 1 } = req.query;
   const { article_id } = req.params;
 
-  const commentsByArticleId = readCommentsByArticleId(article_id);
+  const commentsByArticleId = readCommentsByArticleId(article_id, limit, page);
   const articleIdCheck = readRowInColumn(
     "articles",
     "article_id",
@@ -67,8 +68,7 @@ exports.getCommentsByArticleId = (req, res) => {
 
   return Promise.all([commentsByArticleId, articleIdCheck]).then(
     ([commentsByArticleId]) => {
-      const { rows } = commentsByArticleId;
-      res.send({ articleComments: rows });
+      res.send(commentsByArticleId);
     }
   );
 };

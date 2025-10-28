@@ -13,6 +13,7 @@ const {
   createCommentInArticle,
   updateCommentVotes,
   deleteCommentinModel,
+  verifyReadCommentsQueries,
 } = require("./comments");
 
 module.exports = {
@@ -28,4 +29,5 @@ module.exports = {
   createCommentInArticle,
   updateCommentVotes,
   deleteCommentinModel,
+  verifyReadCommentsQueries,
 };

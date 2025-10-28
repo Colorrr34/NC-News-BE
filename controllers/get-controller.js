@@ -6,6 +6,7 @@ const {
   readArticles,
   readCommentsByArticleId,
   verifyReadArticlesQueries,
+  verifyReadCommentsQueries,
 } = require("../models/index");
 
 exports.getTopics = (req, res) => {
@@ -58,17 +59,22 @@ exports.getCommentsByArticleId = (req, res) => {
   const { limit = 10, p: page = 1 } = req.query;
   const { article_id } = req.params;
 
-  const commentsByArticleId = readCommentsByArticleId(article_id, limit, page);
-  const articleIdCheck = readRowInColumn(
-    "articles",
-    "article_id",
-    article_id,
-    "Article"
-  );
-
-  return Promise.all([commentsByArticleId, articleIdCheck]).then(
-    ([commentsByArticleId]) => {
+  return verifyReadCommentsQueries(limit, page)
+    .then(() => {
+      const commentsByArticleId = readCommentsByArticleId(
+        article_id,
+        limit,
+        page
+      );
+      const articleIdCheck = readRowInColumn(
+        "articles",
+        "article_id",
+        article_id,
+        "Article"
+      );
+      return Promise.all([commentsByArticleId, articleIdCheck]);
+    })
+    .then(([commentsByArticleId]) => {
       res.send(commentsByArticleId);
-    }
-  );
+    });
 };

@@ -37,8 +37,15 @@ exports.readCommentsByArticleId = (article_id, limit, page) => {
       };
     })
     .catch((err) => {
-      console.log(err);
+      return Promise.reject(err);
     });
+};
+
+exports.verifyReadCommentsQueries = (limit, page) => {
+  if (Math.sign(page) !== 1 || Math.sign(limit) !== 1) {
+    return Promise.reject({ status: 400, msg: "Invalid Queries" });
+  }
+  return Promise.resolve();
 };
 
 exports.createCommentInArticle = (commentBody, author, article_id) => {

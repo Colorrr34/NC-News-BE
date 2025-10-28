@@ -1,0 +1,45 @@
+body {
+  background-color: #f5ebe7;
+  margin: 40px 120px;
+}
+
+header {
+  padding: 1rem;
+  background-color: #f3e2d6;
+}
+
+nav {
+  background-color: #d6c0b3;
+  display: flexbox;
+}
+
+h1 {
+  color: brown;
+}
+
+li {
+  padding: 1.5%;
+  list-style: none;
+  display: inline-block;
+  background-color: #b17457;
+  font-weight: bold;
+  justify-content: start;
+}
+a {
+  color: #faf7f0;
+}
+
+section {
+  background-color: #d8d2c2;
+  margin: 0% 0% 5%;
+  padding: 1.5%;
+}
+
+footer {
+  background-color: #939185;
+  padding: 1.5%;
+}
+
+#github {
+  color: #001c4d;
+}

@@ -347,6 +347,23 @@ describe("GET", () => {
             expect(msg).toBe("Article Not Found");
           });
       });
+
+      test("invalid p or limit values gets an error of status code 400", async () => {
+        const pPromise = await request(app)
+          .get("/api/articles/1/comments?p=invalid")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Invalid Queries");
+          });
+        const limitPromise = await request(app)
+          .get("/api/articles/1/comments?limit=invalid")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Invalid Queries");
+          });
+
+        return Promise.all([pPromise, limitPromise]);
+      });
     });
   });
 });

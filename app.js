@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const {
   invalidPathHandler,
   errorStatusHandler,
@@ -7,6 +8,8 @@ const {
   status500Handler,
 } = require("./controllers/error-handler");
 const apiRouter = require("./routers/api-router");
+
+app.use(cors());
 
 app.use(express.json());
 

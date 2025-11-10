@@ -29,7 +29,9 @@ exports.readArticles = (sort_by, order, topic, limit, page) => {
         },
         { 1: [] }
       );
+
       const lastPage = Object.keys(paginatedRows).length;
+
       if (!paginatedRows[page]) {
         return Promise.reject({
           status: 404,

@@ -1,6 +1,14 @@
 body {
   background-color: #f5ebe7;
-  margin: 40px 120px;
+  margin: 50px 120px;
+}
+
+p {
+  font-size: large;
+}
+
+a {
+  text-decoration: none;
 }
 
 header {
@@ -8,36 +16,68 @@ header {
   background-color: #f3e2d6;
 }
 
-nav {
-  background-color: #d6c0b3;
-  display: flexbox;
+:where(h1, h2) {
+  color: brown;
 }
 
-h1 {
-  color: brown;
+/* list */
+
+ul {
+  padding-left: 0px;
 }
 
 li {
   padding: 1.5%;
   list-style: none;
-  display: inline-block;
-  background-color: #b17457;
+  display: block;
+  background-color: #c1927c;
   font-weight: bold;
-  justify-content: start;
+  margin-top: 10px;
 }
-a {
-  color: #faf7f0;
+
+/* Nav */
+nav {
+  padding: 20px 0px;
+  background-color: #d6c0b3;
+  display: flexbox;
+  padding: 1.5%;
+}
+
+nav li {
+  width: 80px;
+}
+
+nav a {
+  color: #150c05;
+}
+
+/* section */
+
+section li {
+  width: 450px;
 }
 
 section {
   background-color: #d8d2c2;
-  margin: 0% 0% 5%;
   padding: 1.5%;
 }
 
+.sub-p {
+  text-indent: 20px;
+}
+
+.second-sub-p {
+  text-indent: 40px;
+}
+
+/* footer */
+
 footer {
-  background-color: #939185;
+  background-color: #b5b19b;
   padding: 1.5%;
+  color: #a52a2a;
+  font-weight: 300;
+  font-size: larger;
 }
 
 #github {

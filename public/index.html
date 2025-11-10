@@ -8,38 +8,55 @@
   </head>
   <body>
     <header>
-      <h1>Welcome to Ricky's NC news API</h1>
+      <h1>Ricky's NC news API</h1>
       <p>
         This is a backend propject for a Forum server. I will be adding front
         end features in the future.
       </p>
     </header>
     <nav>
+      <h2>Navigation Links</h2>
       <ul>
-        <li>
+        <li class="nav-list">
           <a href="https://rickys-nc-news-be.onrender.com/api/topics">
             Topics
           </a>
         </li>
-        <li>
+        <li class="nav-list">
           <a href="https://rickys-nc-news-be.onrender.com/api/articles">
-            articles
+            Articles
           </a>
         </li>
-        <li>
-          <a href="https://rickys-nc-news-be.onrender.com/api/useres">
-            users
-          </a>
+        <li class="nav-list">
+          <a href="https://rickys-nc-news-be.onrender.com/api/users"> Users </a>
         </li>
-        <li><a href="">comments</a></li>
+        <li class="nav-list"><a href="">Comments (to be updated)</a></li>
       </ul>
     </nav>
     <section>
       <h2>API Guide</h2>
       <p>
-        You can access different data sets by the path of the url. Please find
-        above for each data sets.
+        You can access different data sets by the end points. Please find above
+        for some examples for the endpoints for their respective data sets.
       </p>
+    </section>
+    <section>
+      <h3>Here are some endpoints for the API</h3>
+      <ul>
+        <li class="endpoints-list">GET /api/topics - a list of topics</li>
+        <li class="endpoints-list">GET /api/users - a list of users</li>
+        <li class="endpoints-list">GET /api/articles - a list of articles</li>
+        <li class="endpoints-list">POST /api/articles - create an article</li>
+        <li class="endpoints-sub-list">
+          GET ~/:articleid - the article with the corresponding article ID
+        </li>
+        <li class="second-sub-list">
+          GET ~/:article/comments - GET the comments in the article
+        </li>
+        <li class="second-sub-list">
+          POST ~/:article/comments - create a comment to the article
+        </li>
+      </ul>
     </section>
     <footer>
       <p>

@@ -1,5 +1,5 @@
 body {
-  background-color: #f5ebe7;
+  background-color: #eceff4;
   margin: 50px 120px;
 }
 
@@ -7,17 +7,13 @@ p {
   font-size: large;
 }
 
-a {
-  text-decoration: none;
-}
-
 header {
   padding: 1rem;
-  background-color: #f3e2d6;
+  background-color: #8fbcbb;
 }
 
 :where(h1, h2) {
-  color: brown;
+  color: #2e3440;
 }
 
 /* list */
@@ -30,7 +26,7 @@ li {
   padding: 1.5%;
   list-style: none;
   display: block;
-  background-color: #c1927c;
+  background-color: #d8dee9;
   font-weight: bold;
   margin-top: 10px;
 }
@@ -38,13 +34,13 @@ li {
 /* Nav */
 nav {
   padding: 20px 0px;
-  background-color: #d6c0b3;
+  background-color: #88c0d0;
   display: flexbox;
   padding: 1.5%;
 }
 
 nav li {
-  width: 80px;
+  width: 120px;
 }
 
 nav a {
@@ -57,25 +53,31 @@ section li {
   width: 450px;
 }
 
+.p-get {
+  color: blue;
+}
+
+.p-post {
+  color: green;
+}
+
+.p-patch {
+  color: orange;
+}
+
+.p-delete {
+  color: red;
+}
+
 section {
-  background-color: #d8d2c2;
+  background-color: #81a1c1;
   padding: 1.5%;
 }
-
-.sub-p {
-  text-indent: 20px;
-}
-
-.second-sub-p {
-  text-indent: 40px;
-}
-
 /* footer */
 
 footer {
-  background-color: #b5b19b;
+  background-color: #5e81ac;
   padding: 1.5%;
-  color: #a52a2a;
   font-weight: 300;
   font-size: larger;
 }

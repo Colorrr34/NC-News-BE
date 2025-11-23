@@ -14,7 +14,7 @@ describe("seed", () => {
             SELECT FROM 
                 information_schema.tables 
             WHERE 
-                table_name = 'topics'
+                table_name = 'topics' 
             );`
         )
         .then(({ rows: [{ exists }] }) => {

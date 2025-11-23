@@ -30,7 +30,6 @@
         <li class="nav-list">
           <a href="https://rickys-nc-news-be.onrender.com/api/users"> Users </a>
         </li>
-        <li class="nav-list"><a href="">Comments (to be updated)</a></li>
       </ul>
     </nav>
     <section>
@@ -42,19 +41,52 @@
     </section>
     <section>
       <h3>Here are some endpoints for the API</h3>
-      <ul>
-        <li class="endpoints-list">GET /api/topics - a list of topics</li>
-        <li class="endpoints-list">GET /api/users - a list of users</li>
-        <li class="endpoints-list">GET /api/articles - a list of articles</li>
-        <li class="endpoints-list">POST /api/articles - create an article</li>
-        <li class="endpoints-sub-list">
-          GET ~/:articleid - the article with the corresponding article ID
+      <ul class="ul-requests">
+        <li class="li-requests">
+          <p class="p-get">Get</p>
+          <ul class="ul-get">
+            <li class="li-get">/api/topics - a ist of topics</li>
+            <li class="li-get">/api/users - a list of users</li>
+            <li class="li-get">
+              <ul class="ul-get-articles">
+                /api/articles - a list of articles
+                <li class="li-get li-get-articles">
+                  ~/:articleid - the article with the corresponding article ID
+                </li>
+                <li class="li-get li-get-articles">
+                  ~/:article/comments - GET the comments in the article
+                </li>
+              </ul>
+            </li>
+          </ul>
         </li>
-        <li class="second-sub-list">
-          GET ~/:article/comments - GET the comments in the article
+        <li class="li-requests">
+          <p class="p-post">Post</p>
+          <ul class="ul-post">
+            <li class="endpoints-list">/api/articles - create an article</li>
+            <li class="second-sub-list">
+              ~/:article/comments - create a comment to the article
+            </li>
+          </ul>
         </li>
-        <li class="second-sub-list">
-          POST ~/:article/comments - create a comment to the article
+        <li class="li-requests">
+          <p class="p-patch">Patch</p>
+          <ul class="ul-patch">
+            <li class="li-patch">
+              /articles/:articleid - update article votes
+            </li>
+            <li class="li-patch">
+              /comments/:commentid - update comment votes
+            </li>
+          </ul>
+        </li>
+        <li class="li-requests">
+          <p class="p-delete">Delete</p>
+          <ul class="ul-delete">
+            <li class="li-delete">
+              /comments/:commentid - delete comment votes
+            </li>
+          </ul>
         </li>
       </ul>
     </section>

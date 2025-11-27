@@ -5,8 +5,6 @@ const topicsRouter = require("./topics-router");
 const usersRouter = require("./users-router");
 const commentsRouter = require("./comments-router");
 
-apiRouter.get("/", express.static("./public"));
-
 apiRouter.use("/topics", topicsRouter);
 
 apiRouter.use("/users", usersRouter);

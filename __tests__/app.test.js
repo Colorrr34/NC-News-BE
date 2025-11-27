@@ -9,7 +9,6 @@ beforeEach(() => seed(data));
 
 afterAll(() => db.end());
 describe("GET", () => {
-  describe("GET mainpage", () => {});
   describe("GET topics", () => {
     test("GET topics from the database", () => {
       return request(app)

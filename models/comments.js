@@ -59,8 +59,11 @@ exports.createCommentInArticle = (commentBody, author, article_id) => {
       [commentBody, author, article_id]
     )
     .catch((err) => {
-      if (err.code === "23503") {
-        return Promise.reject({ status: 404, msg: "Article Not Found" });
+      switch (err.code) {
+        case "23503":
+          return Promise.reject({ status: 404, msg: "Article Not Found" });
+        case "23502":
+          return Promise.reject({ status: 400, msg: "Missing Required Keys" });
       }
       return Promise.reject(err);
     });

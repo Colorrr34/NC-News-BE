@@ -268,7 +268,7 @@ describe("GET", () => {
       return request(app)
         .get("/api/articles/2")
         .expect(200)
-        .then(({ body: article }) => {
+        .then(({ body: { article } }) => {
           const {
             article_id,
             title,
@@ -296,7 +296,7 @@ describe("GET", () => {
       return request(app)
         .get("/api/articles/2")
         .expect(200)
-        .then(({ body: article }) => {
+        .then(({ body: { article } }) => {
           expect(typeof article.comment_count).toBe("number");
         });
     });
@@ -393,9 +393,9 @@ describe("POST", () => {
         .post("/api/articles/2/comments")
         .send(commentBody)
         .expect(201)
-        .then(({ body: responseBody }) => {
+        .then(({ body: { comment } }) => {
           const { comment_id, votes, created_at, author, body, article_id } =
-            responseBody;
+            comment;
           expect(comment_id).toBe(data.commentData.length + 1);
           expect(votes).toBe(0);
           expect(typeof created_at).toBe("string");
@@ -417,6 +417,17 @@ describe("POST", () => {
           .expect(404)
           .then(({ body: { msg } }) => {
             expect(msg).toBe("Article Not Found");
+          });
+      });
+
+      test("POST reuqest missing keys", () => {
+        const commentBody = {};
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(commentBody)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Missing Required Keys");
           });
       });
     });
@@ -511,8 +522,8 @@ describe("PATCH", () => {
         .patch("/api/articles/1")
         .send(patchBody)
         .expect(200)
-        .then(({ body }) => {
-          expect(body.votes).toBe(
+        .then(({ body: { article } }) => {
+          expect(article.votes).toBe(
             data.articleData[0].votes + patchBody.inc_votes
           );
         });
@@ -524,8 +535,8 @@ describe("PATCH", () => {
         .patch("/api/articles/1")
         .send(patchBody)
         .expect(200)
-        .then(({ body }) => {
-          expect(body.votes).toBe(
+        .then(({ body: { article } }) => {
+          expect(article.votes).toBe(
             data.articleData[0].votes + patchBody.inc_votes
           );
         });
@@ -551,8 +562,8 @@ describe("PATCH", () => {
         .patch("/api/comments/1")
         .send(patchBody)
         .expect(200)
-        .then(({ body }) => {
-          expect(body.votes).toBe(
+        .then(({ body: { comment } }) => {
+          expect(comment.votes).toBe(
             data.commentData[0].votes + patchBody.inc_votes
           );
         });
@@ -564,8 +575,8 @@ describe("PATCH", () => {
         .patch("/api/comments/1")
         .send(patchBody)
         .expect(200)
-        .then(({ body }) => {
-          expect(body.votes).toBe(
+        .then(({ body: { comment } }) => {
+          expect(comment.votes).toBe(
             data.commentData[0].votes + patchBody.inc_votes
           );
         });

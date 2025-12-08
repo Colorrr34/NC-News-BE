@@ -6,7 +6,7 @@ exports.postCommentToArticle = (req, res) => {
 
   return createCommentInArticle(commentBody, author, article_id).then(
     ({ rows: [comment] }) => {
-      res.status(201).send(comment);
+      res.status(201).send({ comment: comment });
     }
   );
 };

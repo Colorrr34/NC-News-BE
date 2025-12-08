@@ -5,7 +5,7 @@ exports.patchArticleVotes = (req, res) => {
   const { article_id } = req.params;
 
   return updateArticleVotes(inc_votes, article_id).then(([article]) => {
-    res.send(article);
+    res.send({ article: article });
   });
 };
 
@@ -14,6 +14,6 @@ exports.patchCommentVote = (req, res) => {
   const { comment_id } = req.params;
 
   return updateCommentVotes(inc_votes, comment_id).then(([comment]) => {
-    res.send(comment);
+    res.send({ comment: comment });
   });
 };

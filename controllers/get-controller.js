@@ -51,7 +51,7 @@ exports.getArticleById = (req, res) => {
   const { article_id } = req.params;
 
   return readArticleById(article_id).then((article) => {
-    res.send(article);
+    res.send({ article: article });
   });
 };
 

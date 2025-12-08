@@ -50,13 +50,25 @@ exports.readArticles = (sort_by, order, topic, limit, page) => {
     });
 };
 
-exports.verifyReadArticlesQueries = (order, limit, page, topic) => {
+exports.verifyReadArticlesQueries = (order, limit, page, topic, sort_by) => {
   if (
     !["asc", "desc"].includes(order) ||
     Math.sign(page) !== 1 ||
     Math.sign(limit) !== 1
   ) {
     return Promise.reject({ status: 400, msg: "Invalid Queries" });
+  }
+  if (
+    ![
+      "article_id",
+      "topic",
+      "author",
+      "votes",
+      "article_img_url",
+      "created_at",
+    ].includes(sort_by)
+  ) {
+    return Promise.reject({ status: 400, msg: "Invalid Sort" });
   }
   if (topic === "%%") return Promise.resolve();
   return readTopic(topic).then(() => Promise.resolve());

@@ -97,15 +97,6 @@ describe("GET", () => {
         });
     });
 
-    test("GET articles has a response 404 for topics not found", () => {
-      return request(app)
-        .get("/api/articles?topic=not-a-topic")
-        .expect(404)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("Topic not found");
-        });
-    });
-
     test("comment_count has the correct count", () => {
       return request(app)
         .get("/api/articles")
@@ -165,6 +156,22 @@ describe("GET", () => {
           .expect(400)
           .then(({ body: { msg } }) => {
             expect(msg).toBe("Invalid Queries");
+          });
+      });
+
+      test("GET responds status 400 with invalid sort", () => {
+        return request(app)
+          .get("/api/articles?sort_by=invalid-sort")
+          .expect(400)
+          .then(({ body: { msg } }) => expect(msg).toBe("Invalid Sort"));
+      });
+
+      test("GET articles responds status 404 for topics not found", () => {
+        return request(app)
+          .get("/api/articles?topic=not-a-topic")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Topic Not Found");
           });
       });
 

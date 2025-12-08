@@ -4,6 +4,7 @@ const request = require("supertest");
 const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data");
 require("jest-sorted");
+require("jest-extended");
 
 beforeEach(() => seed(data));
 
@@ -33,12 +34,12 @@ describe("GET", () => {
         .expect(200)
         .then(({ body: { articles } }) => {
           articles.forEach((article) => {
+            expect(article).not.toHaveProperty("body");
             const {
               article_id,
               title,
               topic,
               author,
-              body,
               created_at,
               votes,
               article_img_url,
@@ -48,7 +49,6 @@ describe("GET", () => {
             expect(typeof title).toBe("string");
             expect(typeof topic).toBe("string");
             expect(typeof author).toBe("string");
-            expect(typeof body).toBe("string");
             expect(typeof created_at).toBe("string");
             expect(typeof votes).toBe("number");
             expect(typeof article_img_url).toBe("string");
@@ -71,7 +71,6 @@ describe("GET", () => {
         "article_id",
         "topic",
         "author",
-        "body",
         "votes",
         "article_img_url",
       ];
@@ -95,6 +94,15 @@ describe("GET", () => {
           articles.forEach((article) => {
             expect(article.topic).toBe("mitch");
           });
+        });
+    });
+
+    test("GET articles has a response 404 for topics not found", () => {
+      return request(app)
+        .get("/api/articles?topic=not-a-topic")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Topic not found");
         });
     });
 

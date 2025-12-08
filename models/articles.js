@@ -1,11 +1,12 @@
 const db = require("../db/connection");
 const format = require("pg-format");
+const { readTopic } = require("./topics");
 
 exports.readArticles = (sort_by, order, topic, limit, page) => {
   return db
     .query(
       format(
-        `SELECT articles.*, CAST(count(comments.article_id) AS INTEGER) as comment_count
+        `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(count(comments.article_id) AS INTEGER) as comment_count
       FROM articles LEFT JOIN comments
       on articles.article_id = comments.article_id
       WHERE topic LIKE $1 
@@ -49,7 +50,7 @@ exports.readArticles = (sort_by, order, topic, limit, page) => {
     });
 };
 
-exports.verifyReadArticlesQueries = (order, limit, page) => {
+exports.verifyReadArticlesQueries = (order, limit, page, topic) => {
   if (
     !["asc", "desc"].includes(order) ||
     Math.sign(page) !== 1 ||
@@ -57,7 +58,8 @@ exports.verifyReadArticlesQueries = (order, limit, page) => {
   ) {
     return Promise.reject({ status: 400, msg: "Invalid Queries" });
   }
-  return Promise.resolve();
+  if (topic === "%%") return Promise.resolve();
+  return readTopic(topic).then(() => Promise.resolve());
 };
 
 exports.readArticleById = (article_id) => {

@@ -1,5 +1,5 @@
 const { readRowInColumn } = require("./general");
-const { readTopics } = require("./topics");
+const { readTopics, readTopic } = require("./topics");
 const { readUsers } = require("./users");
 const {
   readArticles,
@@ -19,6 +19,7 @@ const {
 module.exports = {
   readRowInColumn,
   readTopics,
+  readTopic,
   readUsers,
   readArticles,
   verifyReadArticlesQueries,

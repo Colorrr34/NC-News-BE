@@ -24,7 +24,7 @@ exports.getArticles = (req, res) => {
     p: page = 1,
   } = req.query;
 
-  return verifyReadArticlesQueries(order, limit, page)
+  return verifyReadArticlesQueries(order, limit, page, topic)
     .then(() => {
       return readArticles(sort_by, order, topic, limit, +page);
     })

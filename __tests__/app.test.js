@@ -430,6 +430,20 @@ describe("POST", () => {
             expect(msg).toBe("Missing Required Keys");
           });
       });
+
+      test("POST request without an existing user", () => {
+        const commentBody = {
+          body: "test body",
+          author: "not_a_user",
+        };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(commentBody)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("User Not Found");
+          });
+      });
     });
   });
 

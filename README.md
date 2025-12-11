@@ -5,7 +5,7 @@ A RESTful api which allows CRUD requests for different data
 ## Description
 
 Link to the hosted API: https://rickys-nc-news-be.onrender.com/ \
-(Please open it first as it might take up to a minute to activate as Render free tier spins down after 15 minutes of inactivity)
+(It might take up to a minute to activate as the free tier of Render spins down after 15 minutes of inactivity.)
 
 This is a Backend Solo Project to build a a Forum API. There are preset topics that have can have multiple articles for each topic. And under each article users can leave comments in the article and upvote or downvote the article.
 

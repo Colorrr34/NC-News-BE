@@ -1,6 +1,6 @@
 # NC News Backend
 
-A RESTful api which allows CRUD requests for different data
+A REST API which allows CRUD requests for data for a forum.
 
 ## Description
 

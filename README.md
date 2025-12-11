@@ -19,7 +19,7 @@ Jest, pg, pg-format, dotenv, express, supertest and jest extended
 
 1. Set up the .env file for tests. It is required for dotenv to setup the config for connection to the database.
 
-- a .env.test file is required for specifying database for test.
+- .env.test file is required for specifying database for test.
 
 2. Install NPM packages.
 
@@ -45,7 +45,23 @@ The file will be accessed by connection.js through pg method.
 
 1. Set up the .env file for development. It is required for dotenv to setup the config for connection to the database.
 
-- a .env.development is required for specifying database for local development.
+- .env.development is required for specifying database for local development.
 
-2. 
+2. Install NPM packages.
+
+```
+npm install
+```
+
+3. Set up local databases
+
+```
+npm run setup-dbs
+```
+4. Seed the tables and insert development data to the tables
+
+```
+npm run seed-dev
+```
+
 

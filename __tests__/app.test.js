@@ -28,7 +28,7 @@ describe("GET", () => {
   });
 
   describe("GET articles", () => {
-    test("GET articles from the database, added comment_count", () => {
+    test("GET articles from the database, added comments_count", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -43,7 +43,7 @@ describe("GET", () => {
               created_at,
               votes,
               article_img_url,
-              comment_count,
+              comments_count,
             } = article;
             expect(typeof article_id).toBe("number");
             expect(typeof title).toBe("string");
@@ -52,7 +52,7 @@ describe("GET", () => {
             expect(typeof created_at).toBe("string");
             expect(typeof votes).toBe("number");
             expect(typeof article_img_url).toBe("string");
-            expect(typeof comment_count).toBe("number");
+            expect(typeof comments_count).toBe("number");
           });
         });
     });
@@ -97,26 +97,26 @@ describe("GET", () => {
         });
     });
 
-    test("comment_count has the correct count", () => {
+    test("comments_count has the correct count", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then(({ body: { articles } }) => {
-          let commentCountInData = 0;
-          let commentCountByRequest;
+          let commentsCountInData = 0;
+          let commentsCountByRequest;
           data.commentData.forEach((comment) => {
             if (
               comment.article_title === "Living in the shadow of a great man"
             ) {
-              commentCountInData++;
+              commentsCountInData++;
             }
           });
           articles.forEach((article) => {
             if (article.article_id === 1) {
-              commentCountByRequest = article.comment_count;
+              commentsCountByRequest = article.comments_count;
             }
           });
-          expect(commentCountByRequest).toBe(commentCountInData);
+          expect(commentsCountByRequest).toBe(commentsCountInData);
         });
     });
 

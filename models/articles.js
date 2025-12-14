@@ -6,7 +6,7 @@ exports.readArticles = (sort_by, order, topic, limit, page) => {
   return db
     .query(
       format(
-        `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(count(comments.article_id) AS INTEGER) as comment_count
+        `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(count(comments.article_id) AS INTEGER) as comments_count
       FROM articles LEFT JOIN comments
       on articles.article_id = comments.article_id
       WHERE topic LIKE $1 

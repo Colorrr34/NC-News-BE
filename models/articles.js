@@ -66,6 +66,7 @@ exports.verifyReadArticlesQueries = (order, limit, page, topic, sort_by) => {
       "votes",
       "article_img_url",
       "created_at",
+      "comments_count",
     ].includes(sort_by)
   ) {
     return Promise.reject({ status: 400, msg: "Invalid Sort" });

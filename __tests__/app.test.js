@@ -73,6 +73,7 @@ describe("GET", () => {
         "author",
         "votes",
         "article_img_url",
+        "comments_count",
       ];
       return Promise.all(
         tableArray.map((table) => {
